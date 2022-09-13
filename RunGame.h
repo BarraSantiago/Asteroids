@@ -1,7 +1,7 @@
 #pragma once
-#include "raylib.h"
 #include <iostream>
 #include <string>
+#include "raylib.h"
 
 void RunGame();
 void DrawGame();
