@@ -5,7 +5,7 @@
 #include "raylib.h"
 
 void RunGame();
-void DrawGame(Rectangle player);
-void DrawPlayer(Rectangle Player);
+void DrawGame(Rectangle player, float playerRotation);
+void DrawPlayer(Rectangle Player, float playerRotation);
 float RepositionPlayer(Rectangle player);
 Rectangle InitPlayer();

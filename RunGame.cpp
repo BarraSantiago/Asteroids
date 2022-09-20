@@ -9,23 +9,25 @@ void RunGame()
 	InitWindow(width, height, "Asteroids");
 	Vector2 mousePos = { GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f };
 	Rectangle player = InitPlayer();
-
+	float playerRotation=0;
 	while (!WindowShouldClose())
 	{
-		DrawGame(player);
+		DrawGame(player, playerRotation);
 
-		if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
+		if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+		{
 			mousePos = GetMousePosition();
-
+			playerRotation = RepositionPlayer(player);
+		}
 		if (player.x > mousePos.x)
-			player.x -= 600.0f * GetFrameTime();
+			player.x -= 400.0f * GetFrameTime();
 		else if (player.x < mousePos.x)
-			player.x += 600.0f * GetFrameTime();
+			player.x += 400.0f * GetFrameTime();
 
 		if (player.y > mousePos.y)
-			player.y -= 600.0f * GetFrameTime();
+			player.y -= 400.0f * GetFrameTime();
 		else if (player.y < mousePos.y)
-			player.y += 600.0f * GetFrameTime();
+			player.y += 400.0f * GetFrameTime();
 	}
 
 	CloseWindow();
