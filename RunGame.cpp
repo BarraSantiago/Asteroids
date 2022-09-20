@@ -6,37 +6,54 @@ void RunGame()
 {
 	int width = 720;
 	int height = 480;
+	
+	float playerRotation=0.01f;
+	
 	InitWindow(width, height, "Asteroids");
+	
 	Vector2 mousePos = { GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f };
 	Rectangle player = InitPlayer();
-	float playerRotation=0;
+
+	
 	while (!WindowShouldClose())
 	{
-		DrawGame(player, playerRotation);
+		DrawGame(player, playerRotation, mousePos);
 
 		if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
 		{
 			mousePos = GetMousePosition();
 			playerRotation = RepositionPlayer(player);
 		}
-		if (player.x > mousePos.x)
-			player.x -= 400.0f * GetFrameTime();
-		else if (player.x < mousePos.x)
-			player.x += 400.0f * GetFrameTime();
 
-		if (player.y > mousePos.y)
-			player.y -= 400.0f * GetFrameTime();
-		else if (player.y < mousePos.y)
-			player.y += 400.0f * GetFrameTime();
+		MovePlayer(player, mousePos);
 	}
 
 	CloseWindow();
 
 }
 
+void MovePlayer(Rectangle& player, Vector2 mousePos)
+{
+
+	/*if (player.x > mousePos.x)
+		player.x -= 400.0f * GetFrameTime();
+	else if (player.x < mousePos.x)
+		player.x += 400.0f * GetFrameTime();
+
+	if (player.y > mousePos.y)
+		player.y -= 400.0f * GetFrameTime();
+	else if (player.y < mousePos.y)
+		player.y += 400.0f * GetFrameTime();*/
+
+	Vector2 direcVector = { GetMouseX() - player.x, GetMouseY() - player.y };
+	Vector2 normVector = { direcVector.x / sqrt(direcVector.x* direcVector.x), direcVector.y / sqrt(direcVector.y * direcVector.y) };
+	player.x -= (400.0f + normVector.x) * GetFrameTime();
+	player.y -= (400.0f + normVector.y) * GetFrameTime();
+}
+
 float RepositionPlayer(Rectangle player)
 {
-	Vector2 direcVector = { GetMousePosition().x - player.x, GetMousePosition().y - player.y };
+	Vector2 direcVector = { GetMouseX() - player.x, GetMouseY() - player.y };
 
 	float angle = atan(direcVector.y / direcVector.x);
 	
@@ -45,12 +62,14 @@ float RepositionPlayer(Rectangle player)
 	return angle;
 }
 
-void DrawGame(Rectangle player, float playerRotation)
+void DrawGame(Rectangle player, float playerRotation, Vector2 mousePos)
 {
 	BeginDrawing();
 	ClearBackground(BLACK);
-
+	
+	DrawLine(mousePos.x, mousePos.y, player.x, player.y, WHITE);
 	DrawPlayer(player, playerRotation);
+
 	EndDrawing();
 }
 
@@ -58,8 +77,6 @@ void DrawPlayer(Rectangle player, float playerRotation)
 {
 	const Color NEONCYAN = CLITERAL(Color) { 4, 217, 255, 255 };
 	Vector2 origin = { player.width/2, player.height/2};
-
-	Rectangle rec = {};
 	DrawRectanglePro(player, origin, playerRotation, NEONCYAN);
 }
 
