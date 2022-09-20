@@ -45,7 +45,7 @@ void MovePlayer(Rectangle& player, Vector2 mousePos)
 	else if (player.y < mousePos.y)
 		player.y += 400.0f * GetFrameTime();*/
 
-	Vector2 direcVector = { GetMouseX() - player.x, GetMouseY() - player.y };
+	Vector2 direcVector = { mousePos.x - player.x, mousePos.y - player.y };
 	Vector2 normVector = { direcVector.x / sqrt(direcVector.x* direcVector.x), direcVector.y / sqrt(direcVector.y * direcVector.y) };
 	player.x -= (400.0f + normVector.x) * GetFrameTime();
 	player.y -= (400.0f + normVector.y) * GetFrameTime();
