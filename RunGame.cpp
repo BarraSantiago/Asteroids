@@ -8,57 +8,65 @@ void RunGame()
 	int height = 480;
 	InitWindow(width, height, "Asteroids");
 	Vector2 mousePos = { GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f };
-	Player player = InitPlayer();
+	Rectangle player = InitPlayer();
+
 	while (!WindowShouldClose())
 	{
 		DrawGame(player);
+
 		if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
 			mousePos = GetMousePosition();
-		if (player.front.x > mousePos.x)
-			player.front.x -= 600.0f * GetFrameTime();
-		else if (player.front.x < mousePos.x)
-			player.front.x += 600.0f * GetFrameTime();
 
-		if (player.front.y > mousePos.y)
-			player.front.y -= 600.0f * GetFrameTime();
-		else if (player.front.y < mousePos.y)
-			player.front.y += 600.0f * GetFrameTime();
+		if (player.x > mousePos.x)
+			player.x -= 600.0f * GetFrameTime();
+		else if (player.x < mousePos.x)
+			player.x += 600.0f * GetFrameTime();
+
+		if (player.y > mousePos.y)
+			player.y -= 600.0f * GetFrameTime();
+		else if (player.y < mousePos.y)
+			player.y += 600.0f * GetFrameTime();
 	}
 
 	CloseWindow();
 
 }
 
-void ReposPlayer(Player player)
+float RepositionPlayer(Rectangle player)
 {
-	Vector2 mousePos = GetMousePosition();
-	Vector2 direcVector = mousePos - player.front;
-	float angle = 
+	Vector2 direcVector = { GetMousePosition().x - player.x, GetMousePosition().y - player.y };
+
+	float angle = atan(direcVector.y / direcVector.x);
+	
+	angle *= 180 / acos(-1.0f); //CONVERSION RAD TO DEG
+	
+	return angle;
 }
 
-void DrawGame(Player player)
+void DrawGame(Rectangle player, float playerRotation)
 {
 	BeginDrawing();
 	ClearBackground(BLACK);
 
-	DrawPlayer(player);
+	DrawPlayer(player, playerRotation);
 	EndDrawing();
 }
 
-void DrawPlayer(Player player) 
+void DrawPlayer(Rectangle player, float playerRotation) 
 {
 	const Color NEONCYAN = CLITERAL(Color) { 4, 217, 255, 255 };
-	player.right = { player.front.x + 50, player.front.y + 50 };
-	player.left = { player.front.x - 50, player.front.y + 50 };
-	//DrawText(TextFormat("c.y: %i", (int)c.y),GetScreenWidth() / 2,GetScreenHeight() /   2 + 150, GetScreenHeight()/13, WHITE);
-	DrawTriangle(player.front, player.left, player.right, NEONCYAN);
+	Vector2 origin = { player.width/2, player.height/2};
+
+	Rectangle rec = {};
+	DrawRectanglePro(player, origin, playerRotation, NEONCYAN);
 }
 
-Player InitPlayer()
+Rectangle InitPlayer() 
 {
-	Player player;
-	player.front = { GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f };
-	player.right = { player.front.x + 50, player.front.y + 50 };
-	player.left = { player.front.x - 50, player.front.y + 50 };
+	Rectangle player;
+	player.x = GetScreenWidth() / 2.0f;
+	player.y = GetScreenHeight() / 2.0f;
+	player.width = GetScreenWidth() / 20.0f;
+	player.height = GetScreenHeight() / 20.0f;
 	return player;
 }

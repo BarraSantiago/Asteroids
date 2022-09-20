@@ -1,16 +1,11 @@
 #pragma once
 #include <iostream>
 #include <string>
+#include <math.h>
 #include "raylib.h"
 
-struct Player
-{
-	Vector2 front;
-	Vector2 left;
-	Vector2 right;
-};
-
 void RunGame();
-void DrawGame(Player player);
-void DrawPlayer(Player player);
-Player InitPlayer();
+void DrawGame(Rectangle player);
+void DrawPlayer(Rectangle Player);
+float RepositionPlayer(Rectangle player);
+Rectangle InitPlayer();
