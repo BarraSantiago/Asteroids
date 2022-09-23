@@ -8,6 +8,8 @@ void RunGame()
 	int height = 480;
 	
 	float playerRotation=0.01f;
+
+	Bullet bullets[5];
 	
 	InitWindow(width, height, "Asteroids");
 	
@@ -17,13 +19,13 @@ void RunGame()
 	
 	while (!WindowShouldClose())
 	{
-		DrawGame(player, playerRotation, mousePos);
+		DrawGame(player, playerRotation, mousePos, bullets);
 
-		if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-		{
+		if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
 			mousePos = GetMousePosition();
-			playerRotation = RepositionPlayer(player);
-		}
+		if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+			Shoot(player,mousePos, bullets);
+		playerRotation = RepositionPlayer(player);
 
 		MovePlayer(player, mousePos);
 	}
@@ -32,23 +34,61 @@ void RunGame()
 
 }
 
+void Shoot(Rectangle player, Vector2 mousePos, Bullet bullets[])
+{
+	int aux=0;
+	for (int i = 0; i < 5; ++i)
+	{
+		if (!bullets[i].isAlive)
+		{
+			aux = i;
+			break;
+		}
+	}
+	bullets[aux].direction = { mousePos.x - player.x, mousePos.y - player.y };
+	bullets[aux].position = { player.x, player.y };
+	bullets[aux].size = GetScreenWidth()/80;
+	bullets[aux].isAlive = true;
+}
+void DrawBullets(Bullet bullets[])
+{
+	for (int i = 0; i < 5; ++i)
+	{
+		if (bullets[i].isAlive)
+			DrawCircle(static_cast<int>(bullets[i].position.x), static_cast<int>(bullets[i].position.y), static_cast<float>(bullets[i].size), WHITE );
+	}
+}
 void MovePlayer(Rectangle& player, Vector2 mousePos)
 {
-
-	/*if (player.x > mousePos.x)
-		player.x -= 400.0f * GetFrameTime();
+	/*
+	if (player.x > mousePos.x)
+		player.x -= 250.0f * GetFrameTime();
 	else if (player.x < mousePos.x)
-		player.x += 400.0f * GetFrameTime();
+		player.x += 250.0f * GetFrameTime();
 
 	if (player.y > mousePos.y)
-		player.y -= 400.0f * GetFrameTime();
+		player.y -= 250.0f * GetFrameTime();
 	else if (player.y < mousePos.y)
-		player.y += 400.0f * GetFrameTime();*/
-
+		player.y += 250.0f * GetFrameTime();
+	*/
+	
 	Vector2 direcVector = { mousePos.x - player.x, mousePos.y - player.y };
-	Vector2 normVector = { direcVector.x / sqrt(direcVector.x* direcVector.x), direcVector.y / sqrt(direcVector.y * direcVector.y) };
-	player.x -= (400.0f + normVector.x) * GetFrameTime();
-	player.y -= (400.0f + normVector.y) * GetFrameTime();
+	
+	float moduleVector = sqrt(direcVector.x* direcVector.x + direcVector.y * direcVector.y);
+	
+	Vector2 normVector = {direcVector.x/moduleVector, direcVector.y/moduleVector};
+	
+	float speed = 400.0f;
+	if(player.x>mousePos.x)
+		player.x -= (speed+normVector.x) * GetFrameTime();
+	if(player.x<mousePos.x)
+		player.x += (speed+normVector.x) * GetFrameTime();
+	
+	if(player.y>mousePos.y)
+		player.y -= (speed+normVector.y) * GetFrameTime();
+	if(player.y<mousePos.y)
+		player.y += (speed+normVector.y) * GetFrameTime();
+
 }
 
 float RepositionPlayer(Rectangle player)
@@ -62,14 +102,15 @@ float RepositionPlayer(Rectangle player)
 	return angle;
 }
 
-void DrawGame(Rectangle player, float playerRotation, Vector2 mousePos)
+void DrawGame(Rectangle player, float playerRotation, Vector2 mousePos, Bullet bullets[])
 {
 	BeginDrawing();
 	ClearBackground(BLACK);
 	
 	DrawLine(mousePos.x, mousePos.y, player.x, player.y, WHITE);
+	DrawBullets(bullets);
 	DrawPlayer(player, playerRotation);
-
+	
 	EndDrawing();
 }
 
