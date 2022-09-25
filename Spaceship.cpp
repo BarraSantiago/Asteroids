@@ -1,40 +1,48 @@
 ﻿#include "Spaceship.h"
-
+#include "raymath.h"
 #include <cmath>
 
 
-static float acelerationX = 0.1f;
-static float acelerationY = 0.1f;
-
-void MovePlayer(Rectangle& player, Vector2 mousePos)
+void MovePlayer(Spaceship& player, Vector2 mousePos)
 {
-    Vector2 direcVector = {mousePos.x - player.x, mousePos.y - player.y};
+    Vector2 direcVector = {mousePos.x - player.spaceShip.x, mousePos.y - player.spaceShip.y};
+    Vector2 normVector = Vector2Normalize(direcVector);
+    float speed = 1.0f;
+    
+    //float moduleVector = sqrt(direcVector.x * direcVector.x + direcVector.y * direcVector.y);
 
-    float moduleVector = sqrt(direcVector.x * direcVector.x + direcVector.y * direcVector.y);
-
-    Vector2 normVector = {direcVector.x / moduleVector, direcVector.y / moduleVector};
-
-    float speed = 500.0f;
-
+    //Vector2 normVector;// = {direcVector.x / moduleVector, direcVector.y / moduleVector};
+    
     if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT))
     {
-        acelerationX += speed * normVector.x * GetFrameTime();
-        acelerationY += speed * normVector.y * GetFrameTime();
+        player.aceleration.x = normVector.x ;
+        player.aceleration.y = normVector.y ;
+        if (player.velocity.x < 50.0f)
+        {
+            player.velocity.x += player.aceleration.x * GetFrameTime() * speed;
+        }
+        if (player.velocity.y < 50.0f)
+        {
+            player.velocity.y += player.aceleration.y * GetFrameTime() * speed;
+        }
     }
-    
-    player.x += acelerationX;
-    player.y += acelerationY;
-    
+ 
+    player.spaceShip.x += player.velocity.x;
+    player.spaceShip.y += player.velocity.y;
+    if(player.spaceShip.x<=0)
+    {
+        
+    }
     /*
-    if (player.x > mousePos.x)
-        player.x -= (speed + normVector.x) * GetFrameTime();
-    if (player.x < mousePos.x)
-        player.x += (speed + normVector.x) * GetFrameTime();
+    if (player.spaceShip.x > mousePos.x)
+        player.spaceShip.x -= (speed + normVector.x) * GetFrameTime();
+    if (player.spaceShip.x < mousePos.x)
+        player.spaceShip.x += (speed + normVector.x) * GetFrameTime();
 
-    if (player.y > mousePos.y)
-        player.y -= (speed + normVector.y) * GetFrameTime();
-    if (player.y < mousePos.y)
-        player.y += (speed + normVector.y) * GetFrameTime();
+    if (player.spaceShip.y > mousePos.y)
+        player.spaceShip.y -= (speed + normVector.y) * GetFrameTime();
+    if (player.spaceShip.y < mousePos.y)
+        player.spaceShip.y += (speed + normVector.y) * GetFrameTime();
         */
 }
 
@@ -65,12 +73,12 @@ Spaceship InitSpaceship()
     spaceship.y = GetScreenHeight() / 2.0f;
     spaceship.width = GetScreenWidth() / 20.0f;
     spaceship.height = GetScreenHeight() / 20.0f;
-    
+    Vector2 velocity{};
     float aceleration = 400.0f;
     
     int lives = 3;
     
     bool isAlive=true;
     
-    return {spaceship,aceleration,lives,isAlive};
+    return {spaceship,aceleration, aceleration, velocity.x, velocity.y,lives,isAlive};
 }

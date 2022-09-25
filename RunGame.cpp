@@ -27,7 +27,7 @@ void RunGame()
 
         playerRotation = RepositionSpaceship(player.spaceShip);
         UpdateObjects(bullets);
-        MovePlayer(player.spaceShip, mousePos);
+        MovePlayer(player, mousePos);
         DrawGame(player.spaceShip, playerRotation, mousePos, bullets);
     }
     CloseWindow();

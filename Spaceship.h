@@ -4,7 +4,8 @@
 struct Spaceship
 {
     Rectangle spaceShip;
-    float aceleration;
+    Vector2 aceleration;
+    Vector2 velocity;
     int lives;
     bool isAlive;
     
@@ -12,4 +13,4 @@ struct Spaceship
 
 Spaceship InitSpaceship();
 float RepositionSpaceship(Rectangle spaceship);
-void MovePlayer(Rectangle& player, Vector2 mousePos);
+void MovePlayer(Spaceship& player, Vector2 mousePos);
