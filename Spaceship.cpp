@@ -1,50 +1,58 @@
 ﻿#include "Spaceship.h"
-#include "raymath.h"
 #include <cmath>
+#include "raymath.h"
 
 
 void MovePlayer(Spaceship& player, Vector2 mousePos)
 {
-    Vector2 direcVector = {mousePos.x - player.spaceShip.x, mousePos.y - player.spaceShip.y};
+    Vector2 direcVector = {mousePos.x - player.spaceship.x, mousePos.y - player.spaceship.y};
     Vector2 normVector = Vector2Normalize(direcVector);
     float speed = 1.0f;
-    
+
     //float moduleVector = sqrt(direcVector.x * direcVector.x + direcVector.y * direcVector.y);
 
     //Vector2 normVector;// = {direcVector.x / moduleVector, direcVector.y / moduleVector};
-    
+    float maxVelocity = 10.0f;
     if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT))
     {
-        player.aceleration.x = normVector.x ;
-        player.aceleration.y = normVector.y ;
-        if (player.velocity.x < 50.0f)
-        {
-            player.velocity.x += player.aceleration.x * GetFrameTime() * speed;
-        }
-        if (player.velocity.y < 50.0f)
-        {
-            player.velocity.y += player.aceleration.y * GetFrameTime() * speed;
-        }
-    }
- 
-    player.spaceShip.x += player.velocity.x;
-    player.spaceShip.y += player.velocity.y;
-    if(player.spaceShip.x<=0)
-    {
+        player.aceleration.x = normVector.x;
+        player.aceleration.y = normVector.y;
         
-    }
-    /*
-    if (player.spaceShip.x > mousePos.x)
-        player.spaceShip.x -= (speed + normVector.x) * GetFrameTime();
-    if (player.spaceShip.x < mousePos.x)
-        player.spaceShip.x += (speed + normVector.x) * GetFrameTime();
+        if (player.velocity.x <= maxVelocity)
+        {
+            float velocityX = player.aceleration.x * GetFrameTime() * speed;
+            player.velocity.x += abs(velocityX) <= maxVelocity ? velocityX : maxVelocity;
+        }
+        
+        if (player.velocity.y <= maxVelocity)
+        {
+            float velocityY = player.aceleration.y * GetFrameTime() * speed;
 
-    if (player.spaceShip.y > mousePos.y)
-        player.spaceShip.y -= (speed + normVector.y) * GetFrameTime();
-    if (player.spaceShip.y < mousePos.y)
-        player.spaceShip.y += (speed + normVector.y) * GetFrameTime();
-        */
+            player.velocity.y += abs(velocityY) <= maxVelocity ? velocityY : maxVelocity;
+        }
+    }
+
+    player.spaceship.x += player.velocity.x;
+    player.spaceship.y += player.velocity.y;
+
+    WarpCoords(player);
 }
+
+void WarpCoords(Spaceship& player)
+{
+    if (player.spaceship.x < 0)
+        player.spaceship.x += GetScreenWidth();
+    
+    if (player.spaceship.y < 0)
+        player.spaceship.y += GetScreenHeight();
+    
+    if (player.spaceship.x > GetScreenWidth())
+        player.spaceship.x -= GetScreenWidth();
+    
+    if(player.spaceship.y > GetScreenHeight())
+        player.spaceship.y -= GetScreenHeight(); 
+}
+
 
 float RepositionSpaceship(Rectangle spaceship)
 {
@@ -53,17 +61,23 @@ float RepositionSpaceship(Rectangle spaceship)
     float angle = atan(direcVector.y / direcVector.x);
 
     angle *= 180 / acos(-1.0f); //CONVERSION RAD TO DEG
-    if(direcVector.x < 0 )
-        angle +=180;
+    
+    if (direcVector.x < 0)
+        angle += 180;
+    
     return angle;
 }
 
 
-void DrawSpaceship(Rectangle player, float playerRotation)
+void DrawSpaceship(Rectangle spaceship, float playerRotation, Texture2D spaceshipTexture)
 {
+    int frameWidth = spaceshipTexture.width;
+    int frameHeight = spaceshipTexture.height;
+    Rectangle sourceRec = { 0.0f, 0.0f, (float)frameWidth, (float)frameHeight };
     const Color NEONCYAN = CLITERAL(Color){4, 217, 255, 255};
-    Vector2 origin = {player.width / 2, player.height / 2};
-    DrawRectanglePro(player, origin, playerRotation, NEONCYAN);
+    Vector2 origin = {spaceship.width/2-spaceship.width/10 , spaceship.height / 2};
+    DrawTexturePro(spaceshipTexture, sourceRec, spaceship, origin, playerRotation, NEONCYAN);
+    DrawRectangleLinesEx(spaceship, 2.0f, NEONCYAN);
 }
 
 Spaceship InitSpaceship()
@@ -74,11 +88,8 @@ Spaceship InitSpaceship()
     spaceship.width = GetScreenWidth() / 20.0f;
     spaceship.height = GetScreenHeight() / 20.0f;
     Vector2 velocity{};
-    float aceleration = 400.0f;
-    
+    float aceleration = 200.0f;
     int lives = 3;
-    
-    bool isAlive=true;
-    
-    return {spaceship,aceleration, aceleration, velocity.x, velocity.y,lives,isAlive};
+    bool isAlive = true;
+    return {spaceship, aceleration, aceleration, velocity.x, velocity.y, lives, isAlive};
 }

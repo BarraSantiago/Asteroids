@@ -8,17 +8,22 @@ enum class AsteroidSize
     Big,
     Special
 };
-
+struct Circle
+{
+    int x;
+    int y;
+    float radius;
+    Color color;
+};
 struct Asteroid
 {
-    Vector2 position;
-    Vector2 direction;
-    
-    float speed;
-
+    Circle body;
     AsteroidSize size;
-
+    Vector2 direction;
+    float speed;
     bool isActive;
 };
 
-void InitAsteroid();
+Asteroid InitBigAsteroid();
+Asteroid InitMediumAsteroid();
+void DrawAsteroid(Asteroid asteroid);

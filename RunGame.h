@@ -6,7 +6,6 @@
 #include "Bullet.h"
 
 void RunGame();
-void DrawGame(Rectangle player, float playerRotation, Vector2 mousePos, Bullet bullets[]);
-void DrawSpaceship(Rectangle Player, float playerRotation);
+void DrawGame(Rectangle player, float playerRotation, Vector2 mousePos, Bullet bullets[], Texture2D spaceshipTexture);
 void UpdateObjects(Bullet bullets[]);
 
