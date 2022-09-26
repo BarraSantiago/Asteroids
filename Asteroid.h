@@ -27,3 +27,4 @@ struct Asteroid
 Asteroid InitBigAsteroid();
 Asteroid InitMediumAsteroid();
 void DrawAsteroid(Asteroid asteroid);
+void SpawnBigAsteroids(Asteroid asteroids[], int quantity);
