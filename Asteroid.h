@@ -8,10 +8,11 @@ enum class AsteroidSize
     Big,
     Special
 };
+
 struct Circle
 {
-    int x;
-    int y;
+    float x;
+    float y;
     float radius;
     Color color;
 };
@@ -28,3 +29,4 @@ Asteroid InitBigAsteroid();
 Asteroid InitMediumAsteroid();
 void DrawAsteroid(Asteroid asteroid);
 void SpawnBigAsteroids(Asteroid asteroids[], int quantity);
+void WarpAsteroid(Asteroid& asteroid);

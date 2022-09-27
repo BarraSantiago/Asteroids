@@ -54,7 +54,7 @@ void UpdateBullets(Bullet bullets[])
         {
             bullets[i].position.x += bullets[i].speed * bullets[i].direction.x * GetFrameTime();
             bullets[i].position.y += bullets[i].speed * bullets[i].direction.y * GetFrameTime();
-            bullets[i].isActive = 0 < bullets[i].position.x < GetScreenWidth() && 0 < bullets[i].position.y < GetScreenHeight();
+            bullets[i].isActive = 0 < bullets[i].position.x && bullets[i].position.x  < GetScreenWidth() && 0 < bullets[i].position.y && bullets[i].position.x < GetScreenHeight();
         }
     }
 }
@@ -66,8 +66,10 @@ void UpdateAsteroids(Asteroid asteroids[])
     {
         if (asteroids[i].isActive)
         {
-            asteroids[i].body.x += GetFrameTime() * asteroids[i].direction.x * asteroids[i].speed;
-            asteroids[i].body.y += GetFrameTime() * asteroids[i].direction.y * asteroids[i].speed;
+            Vector2 velocity = { GetFrameTime() * asteroids[i].direction.x * asteroids[i].speed, GetFrameTime() * asteroids[i].direction.y * asteroids[i].speed };
+            asteroids[i].body.x += velocity.x;
+            asteroids[i].body.y += velocity.y;
+            WarpAsteroid(asteroids[i]);
         }
     }
 }
