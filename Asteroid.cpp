@@ -1,10 +1,10 @@
 ﻿#include "Asteroid.h"
-
+#include <raymath.h>
 
 Asteroid InitBigAsteroid()
 {
-    int positionX = GetRandomValue(-(GetScreenWidth()/50), GetScreenWidth());
-    int positionY = GetRandomValue(-(GetScreenHeight()/50), GetScreenHeight());
+    float positionX = GetRandomValue(-(GetScreenWidth() / 20.0f), GetScreenWidth()+ GetScreenWidth() / 20.0f);
+    float positionY = GetRandomValue(-(GetScreenWidth() / 20.0f), GetScreenHeight()+ GetScreenWidth() / 20.0f);
     
     float radius = GetScreenWidth() / 20.0f;
     
@@ -13,11 +13,12 @@ Asteroid InitBigAsteroid()
     Vector2 direction;
     direction.x = GetRandomValue(-70, 70);
     direction.y = GetRandomValue(-70, 70);
-    
-
+    direction.x += direction.x > 0 ? 10 : -10;
+    direction.y += direction.y > 0 ? 10 : -10;
+    direction = Vector2Normalize(direction);
     Vector2 speed;
-    speed.x = GetRandomValue(-70, 70);
-    speed.y = GetRandomValue(-70, 70);
+    speed.x = 75;
+    speed.y = 75;
 
     AsteroidSize asteroidSize = AsteroidSize::Big;
 
@@ -44,7 +45,7 @@ Asteroid InitMediumAsteroid()
 
 void DrawAsteroid(Asteroid asteroid)
 {
-    DrawCircle(asteroid.body.x, asteroid.body.x, asteroid.body.radius,WHITE);
+    DrawCircle(asteroid.body.x, asteroid.body.y, asteroid.body.radius,WHITE);
 }
 
 void SpawnBigAsteroids(Asteroid asteroids[], int quantity)

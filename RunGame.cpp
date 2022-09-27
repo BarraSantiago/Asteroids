@@ -66,14 +66,8 @@ void UpdateAsteroids(Asteroid asteroids[])
     {
         if (asteroids[i].isActive)
         {
-            if (asteroids[i].direction.x == 0)
-                asteroids[i].direction.x = GetRandomValue(-70, 70);
-
-            if (asteroids[i].direction.y == 0)
-                asteroids[i].direction.y = GetRandomValue(-70, 70);
-
-            asteroids[i].body.x += GetFrameTime() * asteroids[i].direction.y  ;
-            asteroids[i].body.y += GetFrameTime() * asteroids[i].direction.y;
+            asteroids[i].body.x += GetFrameTime() * asteroids[i].direction.x * asteroids[i].speed;
+            asteroids[i].body.y += GetFrameTime() * asteroids[i].direction.y * asteroids[i].speed;
         }
     }
 }

@@ -73,7 +73,7 @@ Spaceship InitSpaceship()
     spaceship.width = GetScreenWidth() / 20.0f;
     spaceship.height = GetScreenHeight() / 20.0f;
     Vector2 velocity{};
-    float aceleration = 200.0f;
+    float aceleration = 0;
     int lives = 3;
     bool isAlive = true;
     return {spaceship, aceleration, aceleration, velocity.x, velocity.y, lives, isAlive};
