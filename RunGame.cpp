@@ -13,13 +13,17 @@ void RunGame()
     int width = 1080;
     int height = 920;
 
-    Bullet bullets[5];
-    Asteroid bigAsteroids[5];
     InitWindow(width, height, "Asteroids");
+    
+    Bullet bullets[5];
+    
+    Asteroid bigAsteroids[5];
     SpawnBigAsteroids(bigAsteroids, 5);
-    Texture2D spaceshipTexture = LoadTexture("src/asteroids_spaceship.png");
-    Vector2 mousePos = {GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f};
+    
     Spaceship player = InitSpaceship();
+    Texture2D spaceshipTexture = LoadTexture("src/asteroids_spaceship.png");
+    
+    Vector2 mousePos = {GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f};
 
     while (!WindowShouldClose())
     {
@@ -48,8 +52,8 @@ void UpdateBullets(Bullet bullets[])
     {
         if (bullets[i].isActive)
         {
-            bullets[i].position.x += (bullets[i].speed * bullets[i].direction.x) * GetFrameTime();
-            bullets[i].position.y += (bullets[i].speed * bullets[i].direction.y) * GetFrameTime();
+            bullets[i].position.x += bullets[i].speed * bullets[i].direction.x * GetFrameTime();
+            bullets[i].position.y += bullets[i].speed * bullets[i].direction.y * GetFrameTime();
             bullets[i].isActive = 0 < bullets[i].position.x < GetScreenWidth() && 0 < bullets[i].position.y < GetScreenHeight();
         }
     }
@@ -57,7 +61,8 @@ void UpdateBullets(Bullet bullets[])
 
 void UpdateAsteroids(Asteroid asteroids[])
 {
-    for (int i = 0; i < sizeof(asteroids); ++i)
+    int max = sizeof(asteroids);
+    for (int i = 0; i < max; ++i)
     {
         if (asteroids[i].isActive)
         {
@@ -67,7 +72,7 @@ void UpdateAsteroids(Asteroid asteroids[])
             if (asteroids[i].direction.y == 0)
                 asteroids[i].direction.y = GetRandomValue(-70, 70);
 
-            asteroids[i].body.x += GetFrameTime() * asteroids[i].direction.x;
+            asteroids[i].body.x += GetFrameTime() * asteroids[i].direction.y  ;
             asteroids[i].body.y += GetFrameTime() * asteroids[i].direction.y;
         }
     }

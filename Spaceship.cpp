@@ -7,30 +7,18 @@ void MovePlayer(Spaceship& player, Vector2 mousePos)
 {
     Vector2 direcVector = {mousePos.x - player.spaceship.x, mousePos.y - player.spaceship.y};
     Vector2 normVector = Vector2Normalize(direcVector);
+
     float speed = 0.750f;
-    float maxVelocity = 10.0f;
-    
+    Vector2 maxVelocity = { 100.0f, 100.0f };
+    maxVelocity = Vector2Normalize(maxVelocity);
     if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT))
     {
-        player.aceleration.x = normVector.x;
-        player.aceleration.y = normVector.y;
-        
-        if (player.velocity.x <= maxVelocity)
-        {
-            float velocityX = player.aceleration.x * GetFrameTime() * speed;
-            player.velocity.x += abs(velocityX) <= maxVelocity ? velocityX : maxVelocity;
-        }
-        
-        if (player.velocity.y <= maxVelocity)
-        {
-            float velocityY = player.aceleration.y * GetFrameTime() * speed;
-
-            player.velocity.y += abs(velocityY) <= maxVelocity ? velocityY : maxVelocity;
-        }
+        player.aceleration.x += normVector.x;
+        player.aceleration.y += normVector.y;
     }
 
-    player.spaceship.x += player.velocity.x;
-    player.spaceship.y += player.velocity.y;
+    player.spaceship.x += player.aceleration.x*GetFrameTime();
+    player.spaceship.y += player.aceleration.y*GetFrameTime();
 
     WarpCoords(player);
 }
