@@ -2,6 +2,8 @@
 
 #include <raymath.h>
 
+void DrawBullet(Bullet bullet);
+
 void Shoot(Rectangle player, Vector2 mousePos, Bullet bullets[])
 {
     int aux=0;
@@ -21,7 +23,7 @@ Bullet InitBullet(Rectangle player, Vector2 mousePos)
     Vector2 direction = { mousePos.x - player.x, mousePos.y - player.y };
     direction = Vector2Normalize(direction);
     Vector2 position = { player.x-player.width/1.7f, player.y };
-    float speed = 300.0f;
+    float speed = 400.0f;
     int size = GetScreenWidth()/160;
     bool isActive = true;
     return {position, direction, speed, size, isActive};
@@ -29,9 +31,17 @@ Bullet InitBullet(Rectangle player, Vector2 mousePos)
 
 void DrawBullets(Bullet bullets[])
 {
-    for (int i = 0; i < 5; ++i)
+    int max = sizeof(bullets);
+    for (int i = 0; i < max; ++i)
     {
         if (bullets[i].isActive)
-            DrawCircle(static_cast<int>(bullets[i].position.x), static_cast<int>(bullets[i].position.y), static_cast<float>(bullets[i].size), WHITE );
+        {
+            DrawBullet(bullets[i]);
+        }
     }
+}
+
+void DrawBullet(Bullet bullet)
+{
+    DrawCircle(static_cast<int>(bullet.position.x), static_cast<int>(bullet.position.y), static_cast<float>(bullet.size), WHITE);
 }
