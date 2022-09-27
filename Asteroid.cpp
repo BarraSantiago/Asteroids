@@ -10,23 +10,27 @@ Asteroid InitBigAsteroid()
     
     Circle body = {positionX, positionY, radius, WHITE};
     
-    int directionX = GetRandomValue(-(GetScreenWidth()/50), GetScreenWidth());
-    Vector2 direction = {static_cast<float>(positionX), static_cast<float>(positionY)};
+    Vector2 direction;
+    direction.x = GetRandomValue(-70, 70);
+    direction.y = GetRandomValue(-70, 70);
+    
 
-    float speed = 200.0f;
+    Vector2 speed;
+    speed.x = GetRandomValue(-70, 70);
+    speed.y = GetRandomValue(-70, 70);
 
     AsteroidSize asteroidSize = AsteroidSize::Big;
 
     bool isActive = true;
-    return {body, asteroidSize, {direction.x, direction.y}, speed, isActive};
+    return {body, asteroidSize, direction, speed.x, isActive};
 }
 
 Asteroid InitMediumAsteroid()
 {
-    int positionX = GetRandomValue(0, 1080);
-    int positionY = GetRandomValue(0, 920);
+    int positionX = GetRandomValue(-(GetScreenWidth() / 50), GetScreenWidth());
+    int positionY = GetRandomValue(-(GetScreenHeight() / 50), GetScreenHeight());
 
-    Circle body = {positionX, positionY, GetScreenWidth() / 20.0f, WHITE};
+    Circle body = {positionX, positionY, GetScreenWidth() / 20.0f, GREEN};
     Vector2 direction = {};
 
     float speed = 200.0f;

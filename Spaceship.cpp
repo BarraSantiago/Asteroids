@@ -7,12 +7,9 @@ void MovePlayer(Spaceship& player, Vector2 mousePos)
 {
     Vector2 direcVector = {mousePos.x - player.spaceship.x, mousePos.y - player.spaceship.y};
     Vector2 normVector = Vector2Normalize(direcVector);
-    float speed = 1.0f;
-
-    //float moduleVector = sqrt(direcVector.x * direcVector.x + direcVector.y * direcVector.y);
-
-    //Vector2 normVector;// = {direcVector.x / moduleVector, direcVector.y / moduleVector};
+    float speed = 0.750f;
     float maxVelocity = 10.0f;
+    
     if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT))
     {
         player.aceleration.x = normVector.x;

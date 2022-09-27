@@ -5,6 +5,9 @@
 
 using namespace std;
 
+void UpdateBullets(Bullet bullets[]);
+void UpdateAsteroids(Asteroid asteroids[]);
+
 void RunGame()
 {
     int width = 1080;
@@ -36,26 +39,40 @@ void RunGame()
 
 void UpdateObjects(Bullet bullets[], Asteroid asteroids[])
 {
+    UpdateAsteroids(asteroids);
+    UpdateBullets(bullets); 
+}
+void UpdateBullets(Bullet bullets[])
+{
     for (int i = 0; i < 5; ++i)
     {
         if (bullets[i].isActive)
         {
             bullets[i].position.x += (bullets[i].speed * bullets[i].direction.x) * GetFrameTime();
             bullets[i].position.y += (bullets[i].speed * bullets[i].direction.y) * GetFrameTime();
-            bullets[i].isActive = 0 < bullets[i].position.x < GetScreenWidth() &&  0 < bullets[i].position.y < GetScreenHeight();
+            bullets[i].isActive = 0 < bullets[i].position.x < GetScreenWidth() && 0 < bullets[i].position.y < GetScreenHeight();
         }
     }
+}
+
+void UpdateAsteroids(Asteroid asteroids[])
+{
     for (int i = 0; i < sizeof(asteroids); ++i)
     {
         if (asteroids[i].isActive)
         {
-            asteroids[i].body.x += asteroids[i].direction.x * GetFrameTime() * asteroids[i].speed;
-            asteroids[i].body.y += asteroids[i].direction.y * GetFrameTime() * asteroids[i].speed;
-            
+            if (asteroids[i].direction.x == 0)
+                asteroids[i].direction.x = GetRandomValue(-70, 70);
+
+            if (asteroids[i].direction.y == 0)
+                asteroids[i].direction.y = GetRandomValue(-70, 70);
+
+            asteroids[i].body.x += GetFrameTime() * asteroids[i].direction.x;
+            asteroids[i].body.y += GetFrameTime() * asteroids[i].direction.y;
         }
-        
     }
 }
+
 
 void DrawGame(Rectangle player, float playerRotation, Vector2 mousePos, Bullet bullets[], Texture2D spaceshipTexture, Asteroid asteroids[])
 {
