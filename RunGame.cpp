@@ -79,7 +79,7 @@ void DrawGame(Rectangle player, float playerRotation, Vector2 mousePos, Bullet b
 {
     BeginDrawing();
     ClearBackground(BLACK);
-    DrawLine(mousePos.x, mousePos.y, player.x, player.y, WHITE);
+    DrawLine(static_cast<int>(mousePos.x), static_cast<int>(mousePos.y), static_cast<int>(player.x), static_cast<int>(player.y), WHITE);
     DrawBullets(bullets);
     DrawSpaceship(player, playerRotation, spaceshipTexture);
     for (int i = 0; i < 5; ++i)

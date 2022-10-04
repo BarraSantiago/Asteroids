@@ -3,8 +3,8 @@
 
 Asteroid InitBigAsteroid()
 {
-    float positionX = static_cast<float>(GetRandomValue(-(GetScreenWidth() / 20),  GetScreenWidth()+ GetScreenWidth() / 20));
-    float positionY = static_cast<float>(GetRandomValue(-(GetScreenWidth() / 20), GetScreenHeight()+ GetScreenWidth() / 20));
+    float positionX = static_cast<float>(GetRandomValue(-GetScreenWidth() / 20,  GetScreenWidth()+ GetScreenWidth() / 20));
+    float positionY = static_cast<float>(GetRandomValue(-GetScreenWidth() / 20, GetScreenHeight()+ GetScreenWidth() / 20));
     
     float radius = GetScreenWidth() / 20.0f;
     
@@ -28,8 +28,8 @@ Asteroid InitBigAsteroid()
 
 Asteroid InitMediumAsteroid()
 {
-    int positionX = GetRandomValue(-(GetScreenWidth() / 50), GetScreenWidth());
-    int positionY = GetRandomValue(-(GetScreenHeight() / 50), GetScreenHeight());
+    float positionX = static_cast<float>(GetRandomValue(-GetScreenWidth() / 50, GetScreenWidth()));
+    float positionY = static_cast<float>(GetRandomValue(-GetScreenHeight() / 50, GetScreenHeight()));
 
     Circle body = {positionX, positionY, GetScreenWidth() / 20.0f, GREEN};
     Vector2 direction = {};
@@ -45,7 +45,7 @@ Asteroid InitMediumAsteroid()
 
 void DrawAsteroid(Asteroid asteroid)
 {
-    DrawCircle(asteroid.body.x, asteroid.body.y, asteroid.body.radius,WHITE);
+    DrawCircle(static_cast<int>(asteroid.body.x), static_cast<int>(asteroid.body.y), asteroid.body.radius,WHITE);
 }
 
 void SpawnBigAsteroids(Asteroid asteroids[], int quantity)
