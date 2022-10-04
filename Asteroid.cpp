@@ -13,8 +13,8 @@ Asteroid InitBigAsteroid()
     Vector2 direction;
     direction.x = static_cast<float>(GetRandomValue(-70, 70));
     direction.y = static_cast<float>(GetRandomValue(-70, 70));
-    direction.x += direction.x > 0 ? 10 : -10;
-    direction.y += direction.y > 0 ? 10 : -10;
+    direction.x += static_cast<int>(direction.x) >= 0 ? 10 : -10;
+    direction.y += static_cast<int>(direction.y) >= 0 ? 10 : -10;
     direction = Vector2Normalize(direction);
     Vector2 speed;
     speed.x = 75;
@@ -45,7 +45,7 @@ Asteroid InitMediumAsteroid()
 
 void DrawAsteroid(Asteroid asteroid)
 {
-    DrawCircle(static_cast<int>(asteroid.body.x), static_cast<int>(asteroid.body.y), asteroid.body.radius,WHITE);
+    DrawCircle(static_cast<int>(asteroid.position.x), static_cast<int>(asteroid.position.y), asteroid.position.radius,WHITE);
 }
 
 void SpawnBigAsteroids(Asteroid asteroids[], int quantity)
@@ -58,20 +58,20 @@ void SpawnBigAsteroids(Asteroid asteroids[], int quantity)
 
 void WarpAsteroid(Asteroid& asteroid)
 {
-    if (asteroid.body.x < 0) 
+    if (asteroid.position.x < 0) 
     {
-        asteroid.body.x += GetScreenWidth();
+        asteroid.position.x += GetScreenWidth();
     }
-    if (asteroid.body.x > GetScreenWidth())
+    if (asteroid.position.x > GetScreenWidth())
     {
-        asteroid.body.x -= GetScreenWidth();
+        asteroid.position.x -= GetScreenWidth();
     }
-    if (asteroid.body.y < 0)
+    if (asteroid.position.y < 0)
     {                 
-        asteroid.body.y += GetScreenHeight();
+        asteroid.position.y += GetScreenHeight();
     }                 
-    if (asteroid.body.y > GetScreenHeight())
+    if (asteroid.position.y > GetScreenHeight())
     {                 
-        asteroid.body.y -= GetScreenHeight();
+        asteroid.position.y -= GetScreenHeight();
     }
 }

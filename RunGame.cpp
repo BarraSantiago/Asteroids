@@ -7,6 +7,8 @@ using namespace std;
 
 void UpdateBullets(Bullet bullets[]);
 void UpdateAsteroids(Asteroid asteroids[]);
+void CheckBulletAsteroidCollision(Bullet bullets[], Asteroid asteroids[]);
+void CheckAsteroidPlayerCollision(Spaceship spaceship, Asteroid asteroids[]);
 
 void RunGame()
 {
@@ -40,12 +42,26 @@ void RunGame()
     CloseWindow();
 }
 
+void DrawGame(Rectangle player, float playerRotation, Vector2 mousePos, Bullet bullets[], Texture2D spaceshipTexture, Asteroid asteroids[])
+{
+    BeginDrawing();
+    ClearBackground(BLACK);
+    DrawLine(static_cast<int>(mousePos.x), static_cast<int>(mousePos.y), static_cast<int>(player.x), static_cast<int>(player.y), WHITE);
+    DrawBullets(bullets);
+    DrawSpaceship(player, playerRotation, spaceshipTexture);
+    for (int i = 0; i < 5; ++i)
+    {
+        DrawAsteroid(asteroids[i]);
+    }
+    EndDrawing();
+}
 
 void UpdateObjects(Bullet bullets[], Asteroid asteroids[])
 {
     UpdateAsteroids(asteroids);
     UpdateBullets(bullets); 
 }
+
 void UpdateBullets(Bullet bullets[])
 {
     for (int i = 0; i < 5; ++i)
@@ -74,17 +90,17 @@ void UpdateAsteroids(Asteroid asteroids[])
     }
 }
 
-
-void DrawGame(Rectangle player, float playerRotation, Vector2 mousePos, Bullet bullets[], Texture2D spaceshipTexture, Asteroid asteroids[])
+void UpdateCollisions(Bullet bullets[], Asteroid asteroids[])
 {
-    BeginDrawing();
-    ClearBackground(BLACK);
-    DrawLine(static_cast<int>(mousePos.x), static_cast<int>(mousePos.y), static_cast<int>(player.x), static_cast<int>(player.y), WHITE);
-    DrawBullets(bullets);
-    DrawSpaceship(player, playerRotation, spaceshipTexture);
-    for (int i = 0; i < 5; ++i)
-    {
-        DrawAsteroid(asteroids[i]);
-    }
-    EndDrawing();
+    CheckBulletAsteroidCollision(bullets, asteroids);
+}
+
+void CheckBulletAsteroidCollision(Bullet bullets[], Asteroid asteroids[])
+{
+
+}
+
+void CheckAsteroidPlayerCollision(Spaceship spaceship, Asteroid asteroids[])
+{
+
 }

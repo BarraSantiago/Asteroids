@@ -16,9 +16,10 @@ struct Circle
     float radius;
     Color color;
 };
+
 struct Asteroid
 {
-    Circle body;
+    Circle position;
     AsteroidSize size;
     Vector2 direction;
     float speed;

@@ -8,7 +8,7 @@ struct Bullet
     
     float speed;
 
-    int size;
+    float radius;
 
     bool isActive;
 };
