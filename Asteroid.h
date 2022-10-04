@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <raylib.h>
+#include <vector>
 
 enum class AsteroidSize
 {
@@ -28,6 +29,7 @@ struct Asteroid
 
 Asteroid InitBigAsteroid();
 Asteroid InitMediumAsteroid();
-void DrawAsteroid(Asteroid asteroid);
-void SpawnBigAsteroids(Asteroid asteroids[], int quantity);
+void DrawAsteroids(std::vector<Asteroid> asteroids);
+void SpawnBigAsteroids(std::vector<Asteroid>& asteroids, int quantity);
 void WarpAsteroid(Asteroid& asteroid);
+void SpawnAsteroid(std::vector<Asteroid> asteroids, int positionOrigin);

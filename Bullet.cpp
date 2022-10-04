@@ -24,7 +24,7 @@ Bullet InitBullet(Rectangle player, Vector2 mousePos)
     direction = Vector2Normalize(direction);
     Vector2 position = { player.x-player.width/1.7f, player.y };
     float speed = 400.0f;
-    int size = GetScreenWidth()/160;
+    float size = GetScreenWidth()/160.0f;
     bool isActive = true;
     return {position, direction, speed, size, isActive};
 }
@@ -43,5 +43,5 @@ void DrawBullets(Bullet bullets[])
 
 void DrawBullet(Bullet bullet)
 {
-    DrawCircle(static_cast<int>(bullet.position.x), static_cast<int>(bullet.position.y), static_cast<float>(bullet.size), WHITE);
+    DrawCircle(static_cast<int>(bullet.position.x), static_cast<int>(bullet.position.y), static_cast<float>(bullet.radius), WHITE);
 }

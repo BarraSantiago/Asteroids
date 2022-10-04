@@ -1,5 +1,8 @@
 ﻿#include "Asteroid.h"
 #include <raymath.h>
+#include <algorithm>
+
+void DrawAsteroid(Asteroid asteroid);
 
 Asteroid InitBigAsteroid()
 {
@@ -43,16 +46,50 @@ Asteroid InitMediumAsteroid()
     return {body, asteroidSize, {direction.x, direction.y}, speed, isActive};
 }
 
-void DrawAsteroid(Asteroid asteroid)
+void DrawAsteroids(std::vector<Asteroid> asteroids)
 {
-    DrawCircle(static_cast<int>(asteroid.position.x), static_cast<int>(asteroid.position.y), asteroid.position.radius,WHITE);
+    for (int i = 0; i < static_cast<int>(asteroids.size()) - 1; ++i)
+    {
+        if (asteroids[i].isActive) 
+        {
+            DrawAsteroid(asteroids[i]);
+        }
+    }
 }
 
-void SpawnBigAsteroids(Asteroid asteroids[], int quantity)
+void DrawAsteroid(Asteroid asteroid)
+{
+    DrawCircle(static_cast<int>(asteroid.position.x), static_cast<int>(asteroid.position.y), asteroid.position.radius, WHITE);
+}
+
+void SpawnBigAsteroids(std::vector<Asteroid> &asteroids, int quantity)
 {
     for (int i = 0; i < quantity; ++i)
     {
-        asteroids[i] = InitBigAsteroid();
+        asteroids.push_back(InitBigAsteroid());
+    }
+}
+
+void SpawnAsteroid(std::vector<Asteroid> asteroids, int positionOrigin)
+{
+    AsteroidSize asteroidSize = asteroids[positionOrigin].size;
+    switch (asteroidSize)
+    {
+    case AsteroidSize::Small:
+        asteroids[positionOrigin].isActive = false;
+        break;
+    case AsteroidSize::Medium:
+
+        break;
+    case AsteroidSize::Big:
+        //std::replace(asteroids.begin(), asteroids.end(), asteroidOrigin, InitMediumAsteroid());
+        asteroids.push_back(InitMediumAsteroid());
+        //asteroids.insert(positionOrigin, InitMediumAsteroid());
+        break;
+    case AsteroidSize::Special:
+        break;
+    default:
+        break;
     }
 }
 
