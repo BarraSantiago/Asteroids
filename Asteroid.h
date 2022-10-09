@@ -27,9 +27,8 @@ struct Asteroid
     bool isActive;
 };
 
-Asteroid InitBigAsteroid();
-Asteroid InitMediumAsteroid();
+
 void DrawAsteroids(std::vector<Asteroid> asteroids);
 void SpawnBigAsteroids(std::vector<Asteroid>& asteroids, int quantity);
 void WarpAsteroid(Asteroid& asteroid);
-void SpawnAsteroid(std::vector<Asteroid> asteroids, int positionOrigin);
+void SpawnAsteroid(std::vector<Asteroid>& asteroids, int vecPosition);
