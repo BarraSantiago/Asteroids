@@ -158,6 +158,7 @@
   <ItemGroup>
     <ClInclude Include="Asteroid.h" />
     <ClInclude Include="Bullet.h" />
+    <ClInclude Include="Circle.h" />
     <ClInclude Include="RunGame.h" />
     <ClInclude Include="Spaceship.h" />
   </ItemGroup>

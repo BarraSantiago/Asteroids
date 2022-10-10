@@ -1,14 +1,14 @@
 ﻿#pragma once
 #include <raylib.h>
+#include "Circle.h"
 
 struct Bullet
 {
-    Vector2 position;
-    Vector2 direction;
+    Circle body;
     
-    float speed;
+    Vector2 direction;
 
-    float radius;
+    float speed;
 
     bool isActive;
 };

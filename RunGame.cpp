@@ -1,8 +1,11 @@
 ﻿#include "RunGame.h"
-
-#include "Asteroid.h"
-#include "Spaceship.h"
+#include <iostream>
 #include <vector>
+#include "Asteroid.h"
+#include "Bullet.h"
+#include "raylib.h"
+#include "Spaceship.h"
+
 using namespace std;
 
 #pragma region functionDec
@@ -14,8 +17,9 @@ void CheckBulletAsteroidCollision(Bullet bullets[], vector<Asteroid>& asteroids)
 void CheckAsteroidPlayerCollision(Spaceship& spaceship, vector<Asteroid> asteroids);
 void UpdateObjects(Bullet bullets[], vector<Asteroid>& asteroids);
 void CheckCollisions(Bullet bullets[], vector<Asteroid>& asteroids);
-#pragma endregion 
-    
+bool CircleCircleCollision(Circle c1, Circle c2);
+#pragma endregion
+
 
 void RunGame()
 {
@@ -35,7 +39,7 @@ void RunGame()
 
     Vector2 mousePos = {GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f};
 #pragma endregion
-    
+
     while (!WindowShouldClose())
     {
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
@@ -80,10 +84,11 @@ void UpdateBullets(Bullet bullets[])
     {
         if (bullets[i].isActive)
         {
-            bullets[i].position.x += bullets[i].speed * bullets[i].direction.x * GetFrameTime();
-            bullets[i].position.y += bullets[i].speed * bullets[i].direction.y * GetFrameTime();
-            bullets[i].isActive = 0 < bullets[i].position.x && bullets[i].position.x < static_cast<float>(GetScreenWidth()) && 0 < bullets[
-                i].position.y && bullets[i].position.y < static_cast<float>(GetScreenHeight());
+            bullets[i].body.x += bullets[i].speed * bullets[i].direction.x * GetFrameTime();
+            bullets[i].body.y += bullets[i].speed * bullets[i].direction.y * GetFrameTime();
+            bullets[i].isActive = 0 < bullets[i].body.x && bullets[i].body.x < static_cast<float>(GetScreenWidth()) && 0
+                < bullets[
+                    i].body.y && bullets[i].body.y < static_cast<float>(GetScreenHeight());
         }
     }
 }
@@ -98,8 +103,8 @@ void UpdateAsteroids(vector<Asteroid>& asteroids)
                 GetFrameTime() * asteroids[i].direction.x * asteroids[i].speed,
                 GetFrameTime() * asteroids[i].direction.y * asteroids[i].speed
             };
-            asteroids[i].position.x += velocity.x;
-            asteroids[i].position.y += velocity.y;
+            asteroids[i].body.x += velocity.x;
+            asteroids[i].body.y += velocity.y;
             WarpAsteroid(asteroids[i]);
         }
     }
@@ -119,13 +124,7 @@ void CheckBulletAsteroidCollision(Bullet bullets[], vector<Asteroid>& asteroids)
         {
             if (bullets[j].isActive && asteroids[i].isActive)
             {
-                float distX = bullets[j].position.x - asteroids[i].position.x;
-                float distY = bullets[j].position.y - asteroids[i].position.y;
-                float distance = sqrt((distX * distX) + (distY * distY));
-
-                // if the distance is less than the sum of the circle's
-                // radii, the circles are touching!
-                if (distance <= bullets[j].radius + asteroids[i].position.radius)
+                if (CircleCircleCollision(bullets[j].body, asteroids[i].body))
                 {
                     bullets[j].isActive = false;
                     SpawnAsteroid(asteroids, i);
@@ -133,6 +132,17 @@ void CheckBulletAsteroidCollision(Bullet bullets[], vector<Asteroid>& asteroids)
             }
         }
     }
+}
+
+bool CircleCircleCollision(Circle c1, Circle c2)
+{
+    float distX = c1.x - c2.x;
+    float distY = c1.y - c2.y;
+    float distance = sqrt((distX * distX) + (distY * distY));
+
+    // if the distance is less than the sum of the circle's
+    // radii, the circles are touching!
+    return distance <= c1.radius + c2.radius;
 }
 
 void CheckAsteroidPlayerCollision(Spaceship spaceship, vector<Asteroid> asteroids)

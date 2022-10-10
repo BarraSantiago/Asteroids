@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <raylib.h>
 #include <vector>
+#include "Circle.h"
 
 enum class AsteroidSize
 {
@@ -10,17 +11,9 @@ enum class AsteroidSize
     Special
 };
 
-struct Circle
-{
-    float x;
-    float y;
-    float radius;
-    Color color;
-};
-
 struct Asteroid
 {
-    Circle position;
+    Circle body;
     AsteroidSize size;
     Vector2 direction;
     float speed;
