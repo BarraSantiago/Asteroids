@@ -22,8 +22,8 @@ Bullet InitBullet(Rectangle player, Vector2 mousePos)
 {
     Vector2 direction = { mousePos.x - player.x, mousePos.y - player.y };
     direction = Vector2Normalize(direction);
-    Vector2 position = { player.x-player.width/1.7f, player.y };
-    float speed = 400.0f;
+    Vector2 position = { player.x, player.y };
+    float speed = 500.0f;
     float size = GetScreenWidth()/160.0f;
     bool isActive = true;
     return {position, direction, speed, size, isActive};
@@ -31,7 +31,7 @@ Bullet InitBullet(Rectangle player, Vector2 mousePos)
 
 void DrawBullets(Bullet bullets[])
 {
-    int max = sizeof(bullets);
+    constexpr int max = sizeof(bullets);
     for (int i = 0; i < max; ++i)
     {
         if (bullets[i].isActive)

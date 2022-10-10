@@ -6,7 +6,7 @@ enum class AsteroidSize
 {
     Small,
     Medium,
-    Big,
+    Large,
     Special
 };
 

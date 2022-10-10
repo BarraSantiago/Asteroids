@@ -5,34 +5,37 @@
 #include <vector>
 using namespace std;
 
+#pragma region functionDec
 void UpdateBullets(Bullet bullets[]);
 void UpdateAsteroids(vector<Asteroid>& asteroids);
 void DrawGame(Rectangle player, float playerRotation, Vector2 mousePos, Bullet bullets[], Texture2D spaceshipTexture,
               vector<Asteroid> asteroids);
 void CheckBulletAsteroidCollision(Bullet bullets[], vector<Asteroid>& asteroids);
-void CheckAsteroidPlayerCollision(Spaceship spaceship, vector<Asteroid> asteroids);
+void CheckAsteroidPlayerCollision(Spaceship& spaceship, vector<Asteroid> asteroids);
 void UpdateObjects(Bullet bullets[], vector<Asteroid>& asteroids);
 void CheckCollisions(Bullet bullets[], vector<Asteroid>& asteroids);
-
+#pragma endregion 
+    
 
 void RunGame()
 {
     int width = 1080;
     int height = 920;
-
     InitWindow(width, height, "Asteroids");
 
+#pragma region declarations
     Bullet bullets[5];
 
     vector<Asteroid> asteroids;
 
-    SpawnBigAsteroids(asteroids, 5);
+    SpawnBigAsteroids(asteroids, 2);
 
     Spaceship player = InitSpaceship();
     Texture2D spaceshipTexture = LoadTexture("res/asteroids_spaceship.png");
 
     Vector2 mousePos = {GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f};
-
+#pragma endregion
+    
     while (!WindowShouldClose())
     {
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
@@ -79,15 +82,15 @@ void UpdateBullets(Bullet bullets[])
         {
             bullets[i].position.x += bullets[i].speed * bullets[i].direction.x * GetFrameTime();
             bullets[i].position.y += bullets[i].speed * bullets[i].direction.y * GetFrameTime();
-            bullets[i].isActive = 0 < bullets[i].position.x && bullets[i].position.x < GetScreenWidth() && 0 < bullets[
-                i].position.y && bullets[i].position.x < GetScreenHeight();
+            bullets[i].isActive = 0 < bullets[i].position.x && bullets[i].position.x < static_cast<float>(GetScreenWidth()) && 0 < bullets[
+                i].position.y && bullets[i].position.y < static_cast<float>(GetScreenHeight());
         }
     }
 }
 
 void UpdateAsteroids(vector<Asteroid>& asteroids)
 {
-    for (int i = 0; i < static_cast<int>(asteroids.size()) - 1; ++i)
+    for (int i = 0; i < static_cast<int>(asteroids.size()); ++i)
     {
         if (asteroids[i].isActive)
         {
@@ -102,16 +105,17 @@ void UpdateAsteroids(vector<Asteroid>& asteroids)
     }
 }
 
-void UpdateCollisions(Bullet bullets[], vector<Asteroid>& asteroids)
+void CheckCollisions(Bullet bullets[], vector<Asteroid>& asteroids)
 {
     CheckBulletAsteroidCollision(bullets, asteroids);
+    //CheckAsteroidPlayerCollision();
 }
 
 void CheckBulletAsteroidCollision(Bullet bullets[], vector<Asteroid>& asteroids)
 {
     for (int j = 0; j < static_cast<int>(sizeof(bullets)) - 1; ++j)
     {
-        for (int i = 0; i < static_cast<int>(asteroids.size()) - 1; i++)
+        for (int i = 0; i < static_cast<int>(asteroids.size()); i++)
         {
             if (bullets[j].isActive && asteroids[i].isActive)
             {
