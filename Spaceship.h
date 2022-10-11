@@ -1,18 +1,19 @@
 ﻿#pragma once
 #include <raylib.h>
 
+#include "Circle.h"
+
 struct Spaceship
 {
-    Rectangle spaceship;
+    Circle body;
     Vector2 aceleration;
-    Vector2 velocity;
     int lives;
     bool isAlive;
     float rotation;
 };
 
 Spaceship InitSpaceship();
-float RepositionSpaceship(Rectangle spaceship);
+float RepositionSpaceship(Circle body);
 void MovePlayer(Spaceship& player, Vector2 mousePos);
 void WarpCoords(Spaceship& player);
-void DrawSpaceship(Rectangle spaceship, float playerRotation, Texture2D spaceshipTexture);
+void DrawSpaceship(Circle body, float rotation, Texture2D spaceshipTexture);

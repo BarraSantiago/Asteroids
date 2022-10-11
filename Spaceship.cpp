@@ -5,7 +5,7 @@
 
 void MovePlayer(Spaceship& player, Vector2 mousePos)
 {
-    Vector2 direcVector = {mousePos.x - player.spaceship.x, mousePos.y - player.spaceship.y};
+    Vector2 direcVector = {mousePos.x - player.body.x, mousePos.y - player.body.y};
     Vector2 normVector = Vector2Normalize(direcVector);
 
     if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT))
@@ -14,31 +14,31 @@ void MovePlayer(Spaceship& player, Vector2 mousePos)
         player.aceleration.y += normVector.y;
     }
 
-    player.spaceship.x += (player.aceleration.x*GetFrameTime()) / 6.0f;
-    player.spaceship.y += (player.aceleration.y*GetFrameTime()) / 6.0f;
+    player.body.x += (player.aceleration.x*GetFrameTime()) / 6.0f;
+    player.body.y += (player.aceleration.y*GetFrameTime()) / 6.0f;
 
     WarpCoords(player);
 }
 
 void WarpCoords(Spaceship& player)
 {
-    if (player.spaceship.x < 0)
-        player.spaceship.x += GetScreenWidth();
+    if (player.body.x < 0)
+        player.body.x += static_cast<float>(GetScreenWidth());
     
-    if (player.spaceship.y < 0)
-        player.spaceship.y += GetScreenHeight();
+    if (player.body.y < 0)
+        player.body.y += static_cast<float>(GetScreenHeight());
     
-    if (player.spaceship.x > GetScreenWidth())
-        player.spaceship.x -= GetScreenWidth();
+    if (player.body.x > static_cast<float>(GetScreenWidth()))
+        player.body.x -= static_cast<float>(GetScreenWidth());
     
-    if(player.spaceship.y > GetScreenHeight())
-        player.spaceship.y -= GetScreenHeight(); 
+    if(player.body.y > static_cast<float>(GetScreenHeight()))
+        player.body.y -= static_cast<float>(GetScreenHeight()); 
 }
 
 
-float RepositionSpaceship(Rectangle spaceship)
+float RepositionSpaceship(Circle spaceship)
 {
-    Vector2 direcVector = {GetMouseX() - spaceship.x, GetMouseY() - spaceship.y};
+    Vector2 direcVector = {static_cast<float>(GetMouseX()) - spaceship.x, static_cast<float>(GetMouseY()) - spaceship.y};
 
     float angle = atan(direcVector.y / direcVector.x);
 
@@ -51,27 +51,25 @@ float RepositionSpaceship(Rectangle spaceship)
 }
 
 
-void DrawSpaceship(Rectangle spaceship, float playerRotation, Texture2D spaceshipTexture)
+void DrawSpaceship(Circle body, float rotation, Texture2D spaceshipTexture)
 {
     int frameWidth = spaceshipTexture.width;
     int frameHeight = spaceshipTexture.height;
-    Rectangle sourceRec = { 0.0f, 0.0f, (float)frameWidth, (float)frameHeight };
+    Rectangle sourceRec = { 0.0f, 0.0f, static_cast<float>(frameWidth), static_cast<float>(frameHeight) };
     const Color NEONCYAN = CLITERAL(Color){4, 217, 255, 255};
-    Vector2 origin = {spaceship.width/2-spaceship.width/10 , spaceship.height / 2};
-    DrawTexturePro(spaceshipTexture, sourceRec, spaceship, origin, playerRotation, NEONCYAN);
-    DrawRectangleLinesEx(spaceship, 2.0f, NEONCYAN);
+    Vector2 origin = {body.radius/2-body.radius/10 , body.radius / 2};
+    DrawTexturePro(spaceshipTexture, sourceRec, {body.x, body.y, body.radius, body.radius}, origin, rotation, NEONCYAN);
+    DrawCircleLines(static_cast<int>(body.x), static_cast<int>(body.y), body.radius, NEONCYAN);
 }
 
 Spaceship InitSpaceship()
 {
-    Rectangle spaceship;
-    spaceship.x = GetScreenWidth() / 2.0f;
-    spaceship.y = GetScreenHeight() / 2.0f;
-    spaceship.width = GetScreenWidth() / 20.0f;
-    spaceship.height = GetScreenHeight() / 20.0f;
-    Vector2 velocity{};
+    Circle spaceship;
+    spaceship.x = static_cast<float>(GetScreenWidth()) / 2.0f;
+    spaceship.y = static_cast<float>(GetScreenHeight()) / 2.0f;
+    spaceship.radius = static_cast<float>(GetScreenWidth()) / 20.0f;
     float aceleration = 0;
     int lives = 3;
     bool isAlive = true;
-    return {spaceship, aceleration, aceleration, velocity.x, velocity.y, lives, isAlive};
+    return {spaceship, {aceleration, aceleration}, lives, isAlive};
 }

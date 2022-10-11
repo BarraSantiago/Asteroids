@@ -11,7 +11,7 @@ using namespace std;
 #pragma region functionDec
 void UpdateBullets(Bullet bullets[]);
 void UpdateAsteroids(vector<Asteroid>& asteroids);
-void DrawGame(Rectangle player, float playerRotation, Vector2 mousePos, Bullet bullets[], Texture2D spaceshipTexture,
+void DrawGame(Circle player, float playerRotation, Vector2 mousePos, Bullet bullets[], Texture2D spaceshipTexture,
               vector<Asteroid> asteroids);
 void CheckBulletAsteroidCollision(Bullet bullets[], vector<Asteroid>& asteroids);
 void CheckAsteroidPlayerCollision(Spaceship& spaceship, vector<Asteroid> asteroids);
@@ -44,22 +44,22 @@ void RunGame()
     {
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         {
-            Shoot(player.spaceship, mousePos, bullets);
+            Shoot(player.body, mousePos, bullets);
         }
 
         mousePos = GetMousePosition();
-        player.rotation = RepositionSpaceship(player.spaceship);
+        player.rotation = RepositionSpaceship(player.body);
         CheckCollisions(bullets, asteroids);
         UpdateObjects(bullets, asteroids);
         MovePlayer(player, mousePos);
-        DrawGame(player.spaceship, player.rotation, mousePos, bullets, spaceshipTexture, asteroids);
+        DrawGame(player.body, player.rotation, mousePos, bullets, spaceshipTexture, asteroids);
     }
 
     UnloadTexture(spaceshipTexture);
     CloseWindow();
 }
 
-void DrawGame(Rectangle player, float playerRotation, Vector2 mousePos, Bullet bullets[], Texture2D spaceshipTexture,
+void DrawGame(Circle player, float playerRotation, Vector2 mousePos, Bullet bullets[], Texture2D spaceshipTexture,
               vector<Asteroid> asteroids)
 {
     BeginDrawing();

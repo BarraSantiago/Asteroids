@@ -3,10 +3,32 @@
 
 void DrawAsteroid(Asteroid asteroid);
 
-Asteroid InitAsteroid(Vector2 position, float speed, float radius, AsteroidSize size)
+Asteroid InitAsteroid(Vector2 position,  AsteroidSize size)
 {
-    Circle body = {position.x, position.y, radius};
+    float speed = 30.0f;
+    float radius = static_cast<float>(GetScreenWidth()) / 10.0f;
+    switch (size)
+    {
+    case AsteroidSize::Small:
+        radius = static_cast<float>(GetScreenWidth()) / 75.0f;
+        speed = 150.0f;
+        break;
+    case AsteroidSize::Medium:
+        radius = static_cast<float>(GetScreenWidth()) / 40.0f;
+        speed = 200.0f;
+        break;
+    case AsteroidSize::Large:
+        speed = 75;
+        radius = static_cast<float>(GetScreenWidth()) / 20.0f;
+        break;
+    case AsteroidSize::Special:
 
+        break;
+    default:
+        radius = static_cast<float>(GetScreenWidth()) / 10.0f;
+        break;
+    }
+    Circle body = {position.x, position.y, radius};
     Vector2 direction;
     direction.x = static_cast<float>(GetRandomValue(-70, 70));
     direction.x += static_cast<int>(direction.x) >= 0 ? 10 : -10;
@@ -37,47 +59,39 @@ void SpawnBigAsteroids(std::vector<Asteroid>& asteroids, int quantity)
 {
     for (int i = 0; i < quantity; ++i)
     {
-        float speed = 75;
-        float radius = static_cast<float>(GetScreenWidth()) / 20.0f;
 
-        float positionX = static_cast<float>(GetRandomValue(-GetScreenWidth() / 20,
+        float x = static_cast<float>(GetRandomValue(-GetScreenWidth() / 20,
                                                             GetScreenWidth() + GetScreenWidth() / 20));
-        float positionY = static_cast<float>(GetRandomValue(-GetScreenWidth() / 20,
+        float y = static_cast<float>(GetRandomValue(-GetScreenWidth() / 20,
                                                             GetScreenHeight() + GetScreenWidth() / 20));
-        asteroids.push_back(InitAsteroid({positionX, positionY},speed,radius,AsteroidSize::Large));
+        asteroids.push_back(InitAsteroid({x, y}, AsteroidSize::Large));
     }
 }
 
 void SpawnAsteroid(std::vector<Asteroid>& asteroids, int vecPosition)
 {
-    
-    const float radiusSmall = static_cast<float>(GetScreenWidth()) / 75.0f;
-    const float speedSmall = 150.0f;
-    
-    const float radiusMed = static_cast<float>(GetScreenWidth()) / 40.0f;
-    const float speedMed = 200.0f;
 
     const Vector2 mapPosition = {asteroids[vecPosition].body.x, asteroids[vecPosition].body.y};
     const AsteroidSize size = asteroids[vecPosition].size;
-    
+
     switch (size)
     {
     case AsteroidSize::Small:
         asteroids[vecPosition].isActive = false;
         break;
     case AsteroidSize::Medium:
-        
-        asteroids[vecPosition] = InitAsteroid(mapPosition, speedSmall, radiusSmall, AsteroidSize::Small);
-        asteroids.push_back(InitAsteroid(mapPosition, speedSmall, radiusSmall, AsteroidSize::Small));
+
+        asteroids[vecPosition] = InitAsteroid(mapPosition, AsteroidSize::Small);
+        asteroids.push_back(InitAsteroid(mapPosition, AsteroidSize::Small));
         break;
     case AsteroidSize::Large:
-        asteroids[vecPosition] = InitAsteroid(mapPosition, speedMed, radiusMed,AsteroidSize::Medium );
-        asteroids.push_back(InitAsteroid(mapPosition, speedMed, radiusMed,AsteroidSize::Medium ));
+        asteroids[vecPosition] = InitAsteroid(mapPosition, AsteroidSize::Medium);
+        asteroids.push_back(InitAsteroid(mapPosition, AsteroidSize::Medium));
         break;
     case AsteroidSize::Special:
-        break;
+
     default:
-        break; 
+        break;
     }
 }
 

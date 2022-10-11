@@ -4,9 +4,9 @@
 
 void DrawBullet(Bullet bullet);
 
-void Shoot(Rectangle player, Vector2 mousePos, Bullet bullets[])
+void Shoot(Circle player, Vector2 mousePos, Bullet bullets[])
 {
-    int aux=0;
+    int aux = 0;
     for (int i = 0; i < 5; ++i)
     {
         if (bullets[i].isActive == false)
@@ -18,15 +18,14 @@ void Shoot(Rectangle player, Vector2 mousePos, Bullet bullets[])
     bullets[aux] = InitBullet(player, mousePos);
 }
 
-Bullet InitBullet(Rectangle player, Vector2 mousePos)
+Bullet InitBullet(Circle player, Vector2 mousePos)
 {
-    Vector2 direction = { mousePos.x - player.x, mousePos.y - player.y };
+    Vector2 direction = {mousePos.x - player.x, mousePos.y - player.y};
     direction = Vector2Normalize(direction);
-    Vector2 position = { player.x, player.y };
+    Circle body = {player.x, player.y, static_cast<float>(GetScreenWidth()) / 160.0f};
     float speed = 500.0f;
-    float size = GetScreenWidth()/160.0f;
     bool isActive = true;
-    return {position, direction, speed, size, isActive};
+    return {body, direction, speed, isActive};
 }
 
 void DrawBullets(Bullet bullets[])
@@ -43,5 +42,6 @@ void DrawBullets(Bullet bullets[])
 
 void DrawBullet(Bullet bullet)
 {
-    DrawCircle(static_cast<int>(bullet.position.x), static_cast<int>(bullet.position.y), static_cast<float>(bullet.radius), WHITE);
+    DrawCircle(static_cast<int>(bullet.body.x), static_cast<int>(bullet.body.y), static_cast<float>(bullet.body.radius),
+               WHITE);
 }
