@@ -36,9 +36,9 @@ void WarpCoords(Spaceship& player)
 }
 
 
-float RepositionSpaceship(Circle spaceship)
+float RepositionSpaceship(Circle body)
 {
-    Vector2 direcVector = {static_cast<float>(GetMouseX()) - spaceship.x, static_cast<float>(GetMouseY()) - spaceship.y};
+    Vector2 direcVector = {static_cast<float>(GetMouseX()) - body.x, static_cast<float>(GetMouseY()) - body.y};
 
     float angle = atan(direcVector.y / direcVector.x);
 

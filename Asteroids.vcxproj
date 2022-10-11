@@ -152,6 +152,7 @@
     <ClCompile Include="Asteroid.cpp" />
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="menu.cpp" />
     <ClCompile Include="RunGame.cpp" />
     <ClCompile Include="Spaceship.cpp" />
   </ItemGroup>
@@ -159,6 +160,7 @@
     <ClInclude Include="Asteroid.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Circle.h" />
+    <ClInclude Include="menu.h" />
     <ClInclude Include="RunGame.h" />
     <ClInclude Include="Spaceship.h" />
   </ItemGroup>

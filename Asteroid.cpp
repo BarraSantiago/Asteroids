@@ -89,7 +89,6 @@ void SpawnAsteroid(std::vector<Asteroid>& asteroids, int vecPosition)
         asteroids.push_back(InitAsteroid(mapPosition, AsteroidSize::Medium));
         break;
     case AsteroidSize::Special:
-
     default:
         break;
     }

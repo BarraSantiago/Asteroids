@@ -14,9 +14,9 @@ void UpdateAsteroids(vector<Asteroid>& asteroids);
 void DrawGame(Circle player, float playerRotation, Vector2 mousePos, Bullet bullets[], Texture2D spaceshipTexture,
               vector<Asteroid> asteroids);
 void CheckBulletAsteroidCollision(Bullet bullets[], vector<Asteroid>& asteroids);
-void CheckAsteroidPlayerCollision(Spaceship& spaceship, vector<Asteroid> asteroids);
+void CheckAsteroidPlayerCollision(Spaceship& spaceship, vector<Asteroid> asteroids, bool& damaged);
 void UpdateObjects(Bullet bullets[], vector<Asteroid>& asteroids);
-void CheckCollisions(Bullet bullets[], vector<Asteroid>& asteroids);
+void CheckCollisions(Bullet bullets[], vector<Asteroid>& asteroids, Spaceship& spaceship, bool& damaged);
 bool CircleCircleCollision(Circle c1, Circle c2);
 #pragma endregion
 
@@ -37,19 +37,21 @@ void RunGame()
     Spaceship player = InitSpaceship();
     Texture2D spaceshipTexture = LoadTexture("res/asteroids_spaceship.png");
 
-    Vector2 mousePos = {GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f};
+    Vector2 mousePos = {static_cast<float>(GetScreenWidth()) / 2.0f, static_cast<float>(GetScreenHeight()) / 2.0f};
+
+    bool damaged = false;
+    float timer = 0.0f;
 #pragma endregion
 
     while (!WindowShouldClose())
     {
+        mousePos = GetMousePosition();
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         {
             Shoot(player.body, mousePos, bullets);
         }
-
-        mousePos = GetMousePosition();
         player.rotation = RepositionSpaceship(player.body);
-        CheckCollisions(bullets, asteroids);
+        CheckCollisions(bullets, asteroids, player, damaged);
         UpdateObjects(bullets, asteroids);
         MovePlayer(player, mousePos);
         DrawGame(player.body, player.rotation, mousePos, bullets, spaceshipTexture, asteroids);
@@ -110,10 +112,13 @@ void UpdateAsteroids(vector<Asteroid>& asteroids)
     }
 }
 
-void CheckCollisions(Bullet bullets[], vector<Asteroid>& asteroids)
+void CheckCollisions(Bullet bullets[], vector<Asteroid>& asteroids, Spaceship& spaceship, bool& damaged)
 {
     CheckBulletAsteroidCollision(bullets, asteroids);
-    //CheckAsteroidPlayerCollision();
+    if (!damaged)
+    {
+        CheckAsteroidPlayerCollision(spaceship, asteroids, damaged);
+    }
 }
 
 void CheckBulletAsteroidCollision(Bullet bullets[], vector<Asteroid>& asteroids)
@@ -134,6 +139,28 @@ void CheckBulletAsteroidCollision(Bullet bullets[], vector<Asteroid>& asteroids)
     }
 }
 
+void CheckAsteroidPlayerCollision(Spaceship& spaceship, vector<Asteroid> asteroids, bool& damaged)
+{
+    if (!damaged)
+    {
+        for (int i = 0; i < static_cast<int>(asteroids.size()); ++i)
+        {
+            if (asteroids[i].isActive)
+            {
+                if (CircleCircleCollision(spaceship.body, asteroids[i].body))
+                {
+                    spaceship.lives--;
+                    damaged = true;
+                    if (spaceship.lives <= 0)
+                    {
+                        spaceship.isAlive = false;
+                    }
+                }
+            }
+        }
+    }
+}
+
 bool CircleCircleCollision(Circle c1, Circle c2)
 {
     float distX = c1.x - c2.x;
@@ -143,9 +170,4 @@ bool CircleCircleCollision(Circle c1, Circle c2)
     // if the distance is less than the sum of the circle's
     // radii, the circles are touching!
     return distance <= c1.radius + c2.radius;
-}
-
-void CheckAsteroidPlayerCollision(Spaceship spaceship, vector<Asteroid> asteroids)
-{
-    spaceship.lives--;
 }
