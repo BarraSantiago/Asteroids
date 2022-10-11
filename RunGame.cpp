@@ -14,12 +14,13 @@ void UpdateAsteroids(vector<Asteroid>& asteroids);
 void DrawGame(Circle player, float playerRotation, Vector2 mousePos, Bullet bullets[], Texture2D spaceshipTexture,
               vector<Asteroid> asteroids);
 void CheckBulletAsteroidCollision(Bullet bullets[], vector<Asteroid>& asteroids);
-void CheckAsteroidPlayerCollision(Spaceship& spaceship, vector<Asteroid> asteroids, bool& damaged);
+void CheckAsteroidPlayerCollision(Spaceship& spaceship, vector<Asteroid> asteroids);
 void UpdateObjects(Bullet bullets[], vector<Asteroid>& asteroids);
-void CheckCollisions(Bullet bullets[], vector<Asteroid>& asteroids, Spaceship& spaceship, bool& damaged);
+void CheckCollisions(Bullet bullets[], vector<Asteroid>& asteroids, Spaceship& spaceship);
 bool CircleCircleCollision(Circle c1, Circle c2);
 #pragma endregion
 
+static float damagedTimer;
 
 void RunGame()
 {
@@ -39,8 +40,6 @@ void RunGame()
 
     Vector2 mousePos = {static_cast<float>(GetScreenWidth()) / 2.0f, static_cast<float>(GetScreenHeight()) / 2.0f};
 
-    bool damaged = false;
-    float timer = 0.0f;
 #pragma endregion
 
     while (!WindowShouldClose())
@@ -51,7 +50,7 @@ void RunGame()
             Shoot(player.body, mousePos, bullets);
         }
         player.rotation = RepositionSpaceship(player.body);
-        CheckCollisions(bullets, asteroids, player, damaged);
+        CheckCollisions(bullets, asteroids, player);
         UpdateObjects(bullets, asteroids);
         MovePlayer(player, mousePos);
         DrawGame(player.body, player.rotation, mousePos, bullets, spaceshipTexture, asteroids);
@@ -112,13 +111,11 @@ void UpdateAsteroids(vector<Asteroid>& asteroids)
     }
 }
 
-void CheckCollisions(Bullet bullets[], vector<Asteroid>& asteroids, Spaceship& spaceship, bool& damaged)
+void CheckCollisions(Bullet bullets[], vector<Asteroid>& asteroids, Spaceship& spaceship)
 {
+    
     CheckBulletAsteroidCollision(bullets, asteroids);
-    if (!damaged)
-    {
-        CheckAsteroidPlayerCollision(spaceship, asteroids, damaged);
-    }
+    CheckAsteroidPlayerCollision(spaceship, asteroids);
 }
 
 void CheckBulletAsteroidCollision(Bullet bullets[], vector<Asteroid>& asteroids)
@@ -139,9 +136,9 @@ void CheckBulletAsteroidCollision(Bullet bullets[], vector<Asteroid>& asteroids)
     }
 }
 
-void CheckAsteroidPlayerCollision(Spaceship& spaceship, vector<Asteroid> asteroids, bool& damaged)
+void CheckAsteroidPlayerCollision(Spaceship& spaceship, vector<Asteroid> asteroids)
 {
-    if (!damaged)
+    if (damagedTimer<=0)
     {
         for (int i = 0; i < static_cast<int>(asteroids.size()); ++i)
         {
@@ -150,7 +147,7 @@ void CheckAsteroidPlayerCollision(Spaceship& spaceship, vector<Asteroid> asteroi
                 if (CircleCircleCollision(spaceship.body, asteroids[i].body))
                 {
                     spaceship.lives--;
-                    damaged = true;
+                    damagedTimer = 1.5f;
                     if (spaceship.lives <= 0)
                     {
                         spaceship.isAlive = false;
@@ -158,6 +155,10 @@ void CheckAsteroidPlayerCollision(Spaceship& spaceship, vector<Asteroid> asteroi
                 }
             }
         }
+    }
+    else
+    {
+        damagedTimer-=GetFrameTime();
     }
 }
 

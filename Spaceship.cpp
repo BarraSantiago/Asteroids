@@ -2,6 +2,17 @@
 #include <cmath>
 #include "raymath.h"
 
+void AcelerationLimitator(float& aceleration)
+{
+    if (aceleration>0.35f)
+    {
+        aceleration = 0.35f;
+    }
+    else if(aceleration < -0.35f)
+    {
+        aceleration = -0.35f;
+    }
+}
 
 void MovePlayer(Spaceship& player, Vector2 mousePos)
 {
@@ -10,12 +21,13 @@ void MovePlayer(Spaceship& player, Vector2 mousePos)
 
     if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT))
     {
-        player.aceleration.x += normVector.x;
-        player.aceleration.y += normVector.y;
+        player.aceleration.x += normVector.x*GetFrameTime() / 6.0f;
+        player.aceleration.y += normVector.y*GetFrameTime() / 6.0f;
+        AcelerationLimitator(player.aceleration.x);
+        AcelerationLimitator(player.aceleration.y);
     }
-
-    player.body.x += (player.aceleration.x*GetFrameTime()) / 6.0f;
-    player.body.y += (player.aceleration.y*GetFrameTime()) / 6.0f;
+    player.body.x += player.aceleration.x;
+    player.body.y += player.aceleration.y;
 
     WarpCoords(player);
 }
