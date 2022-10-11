@@ -43,5 +43,5 @@ void DrawBullets(Bullet bullets[])
 void DrawBullet(Bullet bullet)
 {
     DrawCircle(static_cast<int>(bullet.body.x), static_cast<int>(bullet.body.y), static_cast<float>(bullet.body.radius),
-               WHITE);
+               RED);
 }

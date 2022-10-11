@@ -11,8 +11,7 @@ using namespace std;
 #pragma region functionDec
 void UpdateBullets(Bullet bullets[]);
 void UpdateAsteroids(vector<Asteroid>& asteroids);
-void DrawGame(Circle player, float playerRotation, Vector2 mousePos, Bullet bullets[], Texture2D spaceshipTexture,
-              vector<Asteroid> asteroids);
+void DrawGame(Circle player, float playerRotation, Vector2 mousePos, Bullet bullets[], vector<Asteroid> asteroids, Texture2D astTexture, Texture2D spaTexture);
 void CheckBulletAsteroidCollision(Bullet bullets[], vector<Asteroid>& asteroids);
 void CheckAsteroidPlayerCollision(Spaceship& spaceship, vector<Asteroid> asteroids);
 void UpdateObjects(Bullet bullets[], vector<Asteroid>& asteroids);
@@ -21,28 +20,28 @@ bool CircleCircleCollision(Circle c1, Circle c2);
 #pragma endregion
 
 static float damagedTimer;
-
 void RunGame()
 {
-    int width = 1080;
-    int height = 920;
+    constexpr int width = 1080;
+    constexpr int height = 920;
     InitWindow(width, height, "Asteroids");
+    const Texture2D spaceshipTexture = LoadTexture("res/asteroids_spaceship.png");
+    const Texture2D asteroidsTexture = LoadTexture("res/asteroids_asteroids.png");
 
 #pragma region declarations
-    Bullet bullets[5];
+    Bullet bullets[9];
 
     vector<Asteroid> asteroids;
 
-    SpawnBigAsteroids(asteroids, 2);
+    SpawnBigAsteroids(asteroids, 10);
 
     Spaceship player = InitSpaceship();
-    Texture2D spaceshipTexture = LoadTexture("res/asteroids_spaceship.png");
-
-    Vector2 mousePos = {static_cast<float>(GetScreenWidth()) / 2.0f, static_cast<float>(GetScreenHeight()) / 2.0f};
+    
+    Vector2 mousePos {};
 
 #pragma endregion
 
-    while (!WindowShouldClose())
+    while (!WindowShouldClose())// && player.isAlive)
     {
         mousePos = GetMousePosition();
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
@@ -53,23 +52,26 @@ void RunGame()
         CheckCollisions(bullets, asteroids, player);
         UpdateObjects(bullets, asteroids);
         MovePlayer(player, mousePos);
-        DrawGame(player.body, player.rotation, mousePos, bullets, spaceshipTexture, asteroids);
+        DrawGame(player.body, player.rotation, mousePos, bullets, asteroids, asteroidsTexture, spaceshipTexture);
     }
-
+    if(!player.isAlive)
+    {
+        //DEAD SCREEN
+    }
     UnloadTexture(spaceshipTexture);
+    UnloadTexture(asteroidsTexture);
     CloseWindow();
 }
 
-void DrawGame(Circle player, float playerRotation, Vector2 mousePos, Bullet bullets[], Texture2D spaceshipTexture,
-              vector<Asteroid> asteroids)
+void DrawGame(Circle player, float playerRotation, Vector2 mousePos, Bullet bullets[], vector<Asteroid> asteroids, Texture2D astTexture, Texture2D spaTexture)
 {
     BeginDrawing();
     ClearBackground(BLACK);
     DrawLine(static_cast<int>(mousePos.x), static_cast<int>(mousePos.y), static_cast<int>(player.x),
              static_cast<int>(player.y), WHITE);
     DrawBullets(bullets);
-    DrawSpaceship(player, playerRotation, spaceshipTexture);
-    DrawAsteroids(asteroids);
+    DrawSpaceship(player, playerRotation, spaTexture);
+    DrawAsteroids(asteroids, astTexture);
     EndDrawing();
 }
 
@@ -88,8 +90,7 @@ void UpdateBullets(Bullet bullets[])
             bullets[i].body.x += bullets[i].speed * bullets[i].direction.x * GetFrameTime();
             bullets[i].body.y += bullets[i].speed * bullets[i].direction.y * GetFrameTime();
             bullets[i].isActive = 0 < bullets[i].body.x && bullets[i].body.x < static_cast<float>(GetScreenWidth()) && 0
-                < bullets[
-                    i].body.y && bullets[i].body.y < static_cast<float>(GetScreenHeight());
+                < bullets[i].body.y && bullets[i].body.y < static_cast<float>(GetScreenHeight());
         }
     }
 }
@@ -164,11 +165,9 @@ void CheckAsteroidPlayerCollision(Spaceship& spaceship, vector<Asteroid> asteroi
 
 bool CircleCircleCollision(Circle c1, Circle c2)
 {
-    float distX = c1.x - c2.x;
-    float distY = c1.y - c2.y;
-    float distance = sqrt((distX * distX) + (distY * distY));
-
-    // if the distance is less than the sum of the circle's
-    // radii, the circles are touching!
+    const float distX = c1.x - c2.x;
+    const float distY = c1.y - c2.y;
+    const float distance = sqrt((distX * distX) + (distY * distY));
+    
     return distance <= c1.radius + c2.radius;
 }

@@ -57,7 +57,9 @@ float RepositionSpaceship(Circle body)
     angle *= 180 / acos(-1.0f); //CONVERSION RAD TO DEG
     
     if (direcVector.x < 0)
+    {
         angle += 180;
+    }
     
     return angle;
 }
@@ -65,23 +67,24 @@ float RepositionSpaceship(Circle body)
 
 void DrawSpaceship(Circle body, float rotation, Texture2D spaceshipTexture)
 {
-    int frameWidth = spaceshipTexture.width;
-    int frameHeight = spaceshipTexture.height;
-    Rectangle sourceRec = { 0.0f, 0.0f, static_cast<float>(frameWidth), static_cast<float>(frameHeight) };
-    const Color NEONCYAN = CLITERAL(Color){4, 217, 255, 255};
-    Vector2 origin = {body.radius/2-body.radius/10 , body.radius / 2};
-    DrawTexturePro(spaceshipTexture, sourceRec, {body.x, body.y, body.radius, body.radius}, origin, rotation, NEONCYAN);
+    const int frameWidth = spaceshipTexture.width;
+    const int frameHeight = spaceshipTexture.height;
+    const Rectangle sourceRec = { 0.0f, 0.0f, static_cast<float>(frameWidth), static_cast<float>(frameHeight) };
+    constexpr Color NEONCYAN = CLITERAL(Color){4, 217, 255, 255};
+    const Vector2 origin = {body.radius , body.radius};
+    
+    DrawTexturePro(spaceshipTexture, sourceRec, {body.x, body.y, body.radius*2, body.radius*2}, origin, rotation+90, NEONCYAN);
     DrawCircleLines(static_cast<int>(body.x), static_cast<int>(body.y), body.radius, NEONCYAN);
 }
 
 Spaceship InitSpaceship()
 {
-    Circle spaceship;
-    spaceship.x = static_cast<float>(GetScreenWidth()) / 2.0f;
-    spaceship.y = static_cast<float>(GetScreenHeight()) / 2.0f;
-    spaceship.radius = static_cast<float>(GetScreenWidth()) / 20.0f;
+    Circle body{};
+    body.x = static_cast<float>(GetScreenWidth()) / 2.0f;
+    body.y = static_cast<float>(GetScreenHeight()) / 2.0f;
+    body.radius = static_cast<float>(GetScreenWidth()) / 30.0f;
     float aceleration = 0;
     int lives = 3;
     bool isAlive = true;
-    return {spaceship, {aceleration, aceleration}, lives, isAlive};
+    return {body, {aceleration, aceleration}, lives, isAlive};
 }

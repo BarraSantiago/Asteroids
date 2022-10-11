@@ -1,7 +1,7 @@
 ﻿#include "Asteroid.h"
 #include <raymath.h>
 
-void DrawAsteroid(Asteroid asteroid);
+void DrawAsteroid(Asteroid asteroid, Texture2D texture);
 
 Asteroid InitAsteroid(Vector2 position,  AsteroidSize size)
 {
@@ -39,20 +39,27 @@ Asteroid InitAsteroid(Vector2 position,  AsteroidSize size)
     return {body, size, direction, speed, true};
 }
 
-void DrawAsteroids(std::vector<Asteroid> asteroids)
+void DrawAsteroids(std::vector<Asteroid> asteroids, Texture2D texture)
 {
     for (int i = 0; i < static_cast<int>(asteroids.size()); ++i)
     {
         if (asteroids[i].isActive)
         {
-            DrawAsteroid(asteroids[i]);
+            DrawAsteroid(asteroids[i], texture);
         }
     }
 }
 
-void DrawAsteroid(Asteroid asteroid)
+void DrawAsteroid(Asteroid asteroid, Texture2D texture)
 {
-    DrawCircle(static_cast<int>(asteroid.body.x), static_cast<int>(asteroid.body.y), asteroid.body.radius, WHITE);
+    const float frameWidth = static_cast<float>(texture.width);
+    const float frameHeight = static_cast<float>(texture.height);
+    const Rectangle sourceRec = { 0,0,frameWidth,frameHeight};
+    const Vector2 origin = {asteroid.body.radius , asteroid.body.radius};
+    
+    DrawTexturePro(texture, sourceRec, {asteroid.body.x, asteroid.body.y, asteroid.body.radius*2, asteroid.body.radius*2}, origin, 1, RAYWHITE);
+    //DrawCircle(static_cast<int>(asteroid.body.x), static_cast<int>(asteroid.body.y), asteroid.body.radius, WHITE);
+    
 }
 
 void SpawnBigAsteroids(std::vector<Asteroid>& asteroids, int quantity)
@@ -70,7 +77,6 @@ void SpawnBigAsteroids(std::vector<Asteroid>& asteroids, int quantity)
 
 void SpawnAsteroid(std::vector<Asteroid>& asteroids, int vecPosition)
 {
-
     const Vector2 mapPosition = {asteroids[vecPosition].body.x, asteroids[vecPosition].body.y};
     const AsteroidSize size = asteroids[vecPosition].size;
 
