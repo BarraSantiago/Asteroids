@@ -1,38 +1,57 @@
 ﻿#include "menu.h"
 #include <iostream>
 #include "RunGame.h"
+#include "raylib.h"
 
 using namespace std;
+
+#pragma region functions
+void MainMenu();
+void DrawMainMenu(MenuUI menuUI, Rectangle menuRectangles[]);
+void OptionsMenu(int& screenWidth, int& screenHeight);
+void DrawOptions(Rectangle backBackRec, Rectangle screenSizeA, Rectangle screenSizeB, Rectangle backgroundMuic);
+void RulesMenu();
+void DrawRules(Rectangle backRulesRec);
+void CreditsMenu();
+void DrawCredits(Rectangle backCreditsRec);
+MenuUI InitMenuUI();
+#pragma endregion
+
+
+static float height;
+static float width1;
+bool music = true;
+MenuOptions menuOptions = MenuOptions::menu;
 
 void Menu()
 {
     int screenWidth = 1280;
     int screenHeight = 960;
-    bool p2Active = true;
     const char Title[] = "Asteroids";
 
-    MenuOptions menuOptions = MenuOptions::menu;
-
     InitWindow(screenWidth, screenHeight, Title);
+
+    height = static_cast<float>(GetScreenHeight());
+    width1 = static_cast<float>(GetScreenHeight()) / 15.0f;
 
     while (!WindowShouldClose() && menuOptions != MenuOptions::exit)
     {
         switch (menuOptions)
         {
         case MenuOptions::menu:
-            MainMenu(menuOptions);
+            MainMenu();
             break;
         case MenuOptions::play:
             RunGame();
             break;
         case MenuOptions::options:
-            OptionsMenu(menuOptions, screenWidth, screenHeight, p2Active);
+            OptionsMenu(screenWidth, screenHeight);
             break;
         case MenuOptions::rules:
-            RulesMenu(menuOptions);
+            RulesMenu();
             break;
         case MenuOptions::credits:
-            CreditsMenu(menuOptions);
+            CreditsMenu();
             break;
         case MenuOptions::exit:
             CloseWindow();
@@ -41,7 +60,6 @@ void Menu()
             break;
         }
     }
-    CloseWindow();
 }
 
 MenuUI InitMenuUI()
@@ -54,7 +72,7 @@ MenuUI InitMenuUI()
     return {fontSize, xPosition, yPosition, xRepos, yRepos};
 }
 
-void MainMenu(MenuOptions& menuOptions)
+void MainMenu()
 {
     Rectangle menuRectangles[6];
 
@@ -78,19 +96,25 @@ void MainMenu(MenuOptions& menuOptions)
     if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON))
     {
         if (CheckCollisionPointRec(mousePos, menuRectangles[static_cast<int>(MenuOptions::play)]))
+        {
             menuOptions = MenuOptions::play;
-
+        }
         else if (CheckCollisionPointRec(mousePos, menuRectangles[static_cast<int>(MenuOptions::options)]))
+        {
             menuOptions = MenuOptions::options;
-
+        }
         else if (CheckCollisionPointRec(mousePos, menuRectangles[static_cast<int>(MenuOptions::rules)]))
+        {
             menuOptions = MenuOptions::rules;
-
+        }
         else if (CheckCollisionPointRec(mousePos, menuRectangles[static_cast<int>(MenuOptions::credits)]))
+        {
             menuOptions = MenuOptions::credits;
-
+        }
         else if (CheckCollisionPointRec(mousePos, menuRectangles[static_cast<int>(MenuOptions::exit)]))
+        {
             menuOptions = MenuOptions::exit;
+        }
     }
 }
 
@@ -106,8 +130,8 @@ void DrawMainMenu(MenuUI menuUI, Rectangle menuRectangles[])
                          CheckCollisionPointRec(GetMousePosition(), menuRectangles[i]) ? DARKGRAY : BLACK);
     }
 
-    DrawText("Pong", GetScreenWidth() / 2 - GetScreenHeight() / 6, GetScreenHeight() / 25, GetScreenHeight() / 7,
-             WHITE);
+    DrawText("Asteroids", GetScreenWidth() / 2 - MeasureText("Asteroids", GetScreenHeight() / 7) / 2,
+             GetScreenHeight() / 25, GetScreenHeight() / 7, WHITE);
 
     string options[] = {"menu", "Play", "Options", "Rules", "Credits", "Exit"};
 
@@ -123,20 +147,19 @@ void DrawMainMenu(MenuUI menuUI, Rectangle menuRectangles[])
 
     EndDrawing();
 }
-    static const float height = static_cast<float>(GetScreenHeight());
-    static const float width1 = static_cast<float>(GetScreenHeight()) / 15.0f;
-    
-void OptionsMenu(MenuOptions& menuOptions, int& screenWidth, int& screenHeight, bool& p2Active)
+
+
+void OptionsMenu(int& screenWidth, int& screenHeight)
 {
     const float xPos = static_cast<float>(GetScreenWidth()) / 16.0f;
     const float height2 = static_cast<float>(GetScreenHeight()) / 17.0f;
     const Rectangle backBackRec = {xPos, height / 1.8f, width1 * 2.5f, width1};
     const Rectangle screenSizeA = {xPos, height / 3.6f, width1 * 3.5f, height2};
-    const Rectangle screenSizeB = {xPos * 4.15f, height / 3.6f, width1 * 4.3f,height2};
-    const Rectangle onePlayer = {xPos, height / 2.2f, width1 * 3.7f, height2};
-    const Rectangle twoPlayers = {xPos * 4.5f, height / 2.2f, width1 * 4.8f,height2};
+    const Rectangle screenSizeB = {xPos * 4.15f, height / 3.6f, width1 * 4.3f, height2};
+    const Rectangle backgroundMusic = {xPos - xPos/20.0f, height / 2.22f, width1 * 7.7f, height2};
+    //const Rectangle twoPlayers = {xPos * 4.5f, height / 2.2f, width1 * 4.8f, height2};
 
-    DrawOptions(backBackRec, screenSizeA, screenSizeB, onePlayer, twoPlayers);
+    DrawOptions(backBackRec, screenSizeA, screenSizeB, backgroundMusic);
 
     if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON))
     {
@@ -156,15 +179,17 @@ void OptionsMenu(MenuOptions& menuOptions, int& screenWidth, int& screenHeight, 
             screenHeight = 1080;
             SetWindowSize(screenWidth, screenHeight);
         }
-        else if (CheckCollisionPointRec(GetMousePosition(), onePlayer))
-            p2Active = false;
-        else if (CheckCollisionPointRec(GetMousePosition(), twoPlayers))
-            p2Active = true;
+        else if (CheckCollisionPointRec(GetMousePosition(), backgroundMusic))
+        {
+            music = !music;
+        }
+        
+        //else if (CheckCollisionPointRec(GetMousePosition(), twoPlayers))
+          //  p2Active = true;
     }
 }
 
-void DrawOptions(Rectangle backBackRec, Rectangle screenSizeA, Rectangle screenSizeB, Rectangle onePlayer,
-                 Rectangle twoPlayers)
+void DrawOptions(Rectangle backBackRec, Rectangle screenSizeA, Rectangle screenSizeB, Rectangle backgroundMuic)
 {
     const Color NEONCYAN = CLITERAL(Color){4, 217, 255, 255};
     const int xPos = GetScreenWidth() / 15;
@@ -177,53 +202,61 @@ void DrawOptions(Rectangle backBackRec, Rectangle screenSizeA, Rectangle screenS
     const string optionsChangeSize = "Cambiar resolucion de pantalla";
     const string optionsSizeA = "1280x920";
     const string optionsSizeB = "Fullscreen";
-    const string p2Active = "Cantidad de Jugadores";
-    const string onePlayerStr = "1 jugador";
-    const string twoPlayersStr = "2 jugadores";
+    const string p2Active = "Sonidos";
+    const string backgroundMusic = "Musica de Fondo";
+    string isMusicActive = music ? "[a]" : "[ ]";
     const string rulesBack = "Back";
 
     DrawRectangleRec(backBackRec, CheckCollisionPointRec(GetMousePosition(), backBackRec) ? DARKGRAY : BLACK);
     DrawRectangleRec(screenSizeA, CheckCollisionPointRec(GetMousePosition(), screenSizeA) ? DARKGRAY : BLACK);
     DrawRectangleRec(screenSizeB, CheckCollisionPointRec(GetMousePosition(), screenSizeB) ? DARKGRAY : BLACK);
-    DrawRectangleRec(onePlayer, CheckCollisionPointRec(GetMousePosition(), onePlayer) ? DARKGRAY : BLACK);
-    DrawRectangleRec(twoPlayers, CheckCollisionPointRec(GetMousePosition(), twoPlayers) ? DARKGRAY : BLACK);
+    DrawRectangleRec(backgroundMuic, CheckCollisionPointRec(GetMousePosition(), backgroundMuic) ? DARKGRAY : BLACK);
+    //DrawRectangleRec(twoPlayers, CheckCollisionPointRec(GetMousePosition(), twoPlayers) ? DARKGRAY : BLACK);
 
-    DrawText(optionsTitle.c_str(),      xPos, GetScreenHeight() / 9, static_cast<int>(static_cast<float>(fontSize) * 2.3f), WHITE);
+    DrawText(optionsTitle.c_str(), xPos, GetScreenHeight() / 9, static_cast<int>(static_cast<float>(fontSize) * 2.3f),
+             WHITE);
     DrawText(optionsChangeSize.c_str(), xPos, GetScreenHeight() / 5, fontSize1, WHITE);
-    DrawText(optionsSizeA.c_str(),      xPos, static_cast<int>(height / 3.5f),fontSize1, NEONCYAN);
-    DrawText(optionsSizeB.c_str(),  xPos * 4, static_cast<int>(height / 3.5f),fontSize1, NEONCYAN);
-    DrawText(p2Active.c_str(),          xPos, static_cast<int>(height / 2.6f), fontSize * 2, WHITE);
-    DrawText(onePlayerStr.c_str(),      xPos, static_cast<int>(height / 2.2f),fontSize1, NEONCYAN);
-    DrawText(twoPlayersStr.c_str(), static_cast<int>(static_cast<float>(xPos) * 4.4f), static_cast<int>(height / 2.2f), fontSize1, NEONCYAN);
-    DrawText(rulesBack.c_str(),         xPos, static_cast<int>(height / 1.8f), fontSize * 2, WHITE);
+    DrawText(optionsSizeA.c_str(), xPos, static_cast<int>(height / 3.5f), fontSize1, NEONCYAN);
+    DrawText(optionsSizeB.c_str(), xPos * 4, static_cast<int>(height / 3.5f), fontSize1, NEONCYAN);
+    DrawText(p2Active.c_str(), xPos, static_cast<int>(height / 2.6f), fontSize * 2, WHITE);
+    DrawText(backgroundMusic.c_str(), xPos, static_cast<int>(height / 2.2f), fontSize1, NEONCYAN);
+    DrawText(isMusicActive.c_str(), static_cast<int>(static_cast<float>(MeasureText(backgroundMusic.c_str(),fontSize1)) * 1.3f), static_cast<int>(height / 2.2f),
+             fontSize1, NEONCYAN);
+    DrawText(rulesBack.c_str(), xPos, static_cast<int>(height / 1.8f), fontSize * 2, WHITE);
 
     ClearBackground(BLACK);
 
     EndDrawing();
 }
 
-void RulesMenu(MenuOptions& menuOptions)
+void RulesMenu()
 {
-    const Rectangle backRulesRec = {GetScreenWidth() / 16.0f, GetScreenHeight() / 2.0f, width1 * 2.5f, width1
+    const Rectangle backRulesRec = {
+        static_cast<float>(GetScreenWidth()) / 16.0f, static_cast<float>(GetScreenHeight()) / 2.0f, width1 * 2.5f,
+        width1
     };
 
     DrawRules(backRulesRec);
 
-    if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON))
+    if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON) || IsKeyPressed(KEY_ESCAPE))
+    {
         if (CheckCollisionPointRec(GetMousePosition(), backRulesRec))
+        {
             menuOptions = MenuOptions::menu;
+        }
+    }
 }
 
 void DrawRules(Rectangle backRulesRec)
 {
-    const Color NEONCYAN = CLITERAL(Color){4, 217, 255, 255};
+    constexpr Color NEONCYAN = CLITERAL(Color){4, 217, 255, 255};
     const int fontSize = GetScreenHeight() / 30;
     const int xPos = GetScreenWidth() / 15;
 
     BeginDrawing();
 
     const string rulesTitle = "REGLAS";
-    const string rules1P = "Un Jugador:\n-movimiento: WS. Volver al menu: ESC";
+    const string rules1P = "-Movimiento: WS. Volver al menu: ESC";
     const string rules2P = "Dos Jugadores:\n-movimiento: WS y flecha hacia arriba y abajo";
     //const string rulesPowerUpA = "Poderes:\n-Dwarf Ball: Hace que la pelota se reduzca a la mitad. Se resetea cada 10 segundos.";
     //const string rulesPowerUpB = "-Grow Bar: Hace que la paleta crezca. Se resetea cada 8 segundos.";
@@ -236,22 +269,29 @@ void DrawRules(Rectangle backRulesRec)
     DrawText(rules2P.c_str(), xPos, GetScreenHeight() / 3, fontSize, NEONCYAN);
     //DrawText(rulesPowerUpA.c_str(), xPos, GetScreenHeight() / 2, fontSize * 0.9f, NEONCYAN);
     //DrawText(rulesPowerUpB.c_str(), xPos, GetScreenHeight() / 1.7, fontSize, NEONCYAN);
-    DrawText(rulesBack.c_str(), xPos, static_cast<int>(static_cast<float>(GetScreenHeight()) / 1.5f), fontSize * 2, WHITE);
+    DrawText(rulesBack.c_str(), xPos, GetScreenHeight() / 2, fontSize * 2, WHITE);
 
     ClearBackground(BLACK);
 
     EndDrawing();
 }
 
-void CreditsMenu(MenuOptions& menuOptions)
+void CreditsMenu()
 {
-    const Rectangle backCreditsRec = {static_cast<float>(GetScreenWidth()) / 16.0f, static_cast<float>(GetScreenHeight()) / 2.0f, width1 * 2.5f, width1};
+    const Rectangle backCreditsRec = {
+        static_cast<float>(GetScreenWidth()) / 16.0f, static_cast<float>(GetScreenHeight()) / 2.0f, width1 * 2.5f,
+        width1
+    };
 
     DrawCredits(backCreditsRec);
 
     if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON))
+    {
         if (CheckCollisionPointRec(GetMousePosition(), backCreditsRec))
+        {
             menuOptions = MenuOptions::menu;
+        }
+    }
 }
 
 void DrawCredits(Rectangle backCreditsRec)

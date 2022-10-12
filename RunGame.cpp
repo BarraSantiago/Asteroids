@@ -3,6 +3,7 @@
 #include <vector>
 #include "Asteroid.h"
 #include "Bullet.h"
+#include "menu.h"
 #include "raylib.h"
 #include "Spaceship.h"
 
@@ -27,7 +28,11 @@ Texture2D bulletTexture;
 static Texture2D asteroidsTexture;
 static Sound shooting;
 static Sound hit;
+Music backgrounMusic;
 static float damagedTimer;
+
+extern bool music;
+extern MenuOptions menuOptions;
 #pragma endregion
 
 void RunGame()
@@ -43,7 +48,7 @@ void RunGame()
     shooting =  LoadSound("res/spaceship_shoot.wav");
     hit =  LoadSound("res/spaceship_hit.wav");
 
-    const Music backgrounMusic = LoadMusicStream("res/backgroundMusic.wav");
+    backgrounMusic = LoadMusicStream("res/backgroundMusic.wav");
     PlayMusicStream(backgrounMusic);
     
     Bullet bullets[9];
@@ -60,7 +65,6 @@ void RunGame()
 
     while (!WindowShouldClose())// && player.isAlive)
     {
-        UpdateMusicStream(backgrounMusic);
         mousePos = GetMousePosition();
         CheckCollisions(asteroids, bullets, player);
         Update(asteroids, bullets, player);
@@ -76,7 +80,7 @@ void RunGame()
     UnloadSound(shooting);
     UnloadSound(hit);
     CloseAudioDevice();
-    CloseWindow();
+    menuOptions = MenuOptions::menu;
 }
 
 void SpawnBigAsteroids(std::vector<Asteroid>& asteroids, int quantity, Circle spaceship)
@@ -112,6 +116,10 @@ void Update(vector<Asteroid>& asteroids, Bullet bullets[], Spaceship& spaceship)
     UpdateAsteroids(asteroids);
     UpdateBullets(bullets);
     UpdateSpaceship(bullets, spaceship);
+    if(music)
+    {
+        UpdateMusicStream(backgrounMusic);
+    }
 }
 
 void UpdateBullets(Bullet bullets[])
