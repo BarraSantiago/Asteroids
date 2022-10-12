@@ -49,7 +49,7 @@ void DrawAsteroids(std::vector<Asteroid> asteroids, Texture2D texture)
         }
     }
 }
-
+static float rotation = 0;
 void DrawAsteroid(Asteroid asteroid, Texture2D texture)
 {
     const float frameWidth = static_cast<float>(texture.width);
@@ -57,9 +57,9 @@ void DrawAsteroid(Asteroid asteroid, Texture2D texture)
     const Rectangle sourceRec = { 0,0,frameWidth,frameHeight};
     const Vector2 origin = {asteroid.body.radius , asteroid.body.radius};
     
-    DrawTexturePro(texture, sourceRec, {asteroid.body.x, asteroid.body.y, asteroid.body.radius*2, asteroid.body.radius*2}, origin, 1, RAYWHITE);
-    //DrawCircle(static_cast<int>(asteroid.body.x), static_cast<int>(asteroid.body.y), asteroid.body.radius, WHITE);
-    
+    DrawTexturePro(texture, sourceRec, {asteroid.body.x, asteroid.body.y, asteroid.body.radius*2, asteroid.body.radius*2}, origin, rotation, RAYWHITE);
+    DrawCircleLines(static_cast<int>(asteroid.body.x), static_cast<int>(asteroid.body.y), asteroid.body.radius, WHITE);
+    rotation += 1*GetFrameTime();
 }
 
 void SpawnBigAsteroids(std::vector<Asteroid>& asteroids, int quantity)

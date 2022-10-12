@@ -22,13 +22,12 @@ bool CircleCircleCollision(Circle c1, Circle c2);
 static float damagedTimer;
 void RunGame()
 {
-    constexpr int width = 1080;
-    constexpr int height = 920;
-    InitWindow(width, height, "Asteroids");
+    
+#pragma region declarations
     const Texture2D spaceshipTexture = LoadTexture("res/asteroids_spaceship.png");
     const Texture2D asteroidsTexture = LoadTexture("res/asteroids_asteroids.png");
-
-#pragma region declarations
+    InitAudioDevice();
+    Sound shooting =  LoadSound("res/spaceship_shoot.wav");
     Bullet bullets[9];
 
     vector<Asteroid> asteroids;
@@ -47,6 +46,7 @@ void RunGame()
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         {
             Shoot(player.body, mousePos, bullets);
+            PlaySound(shooting);
         }
         player.rotation = RepositionSpaceship(player.body);
         CheckCollisions(bullets, asteroids, player);
@@ -60,6 +60,8 @@ void RunGame()
     }
     UnloadTexture(spaceshipTexture);
     UnloadTexture(asteroidsTexture);
+    UnloadSound(shooting);
+    CloseAudioDevice();
     CloseWindow();
 }
 
@@ -114,7 +116,6 @@ void UpdateAsteroids(vector<Asteroid>& asteroids)
 
 void CheckCollisions(Bullet bullets[], vector<Asteroid>& asteroids, Spaceship& spaceship)
 {
-    
     CheckBulletAsteroidCollision(bullets, asteroids);
     CheckAsteroidPlayerCollision(spaceship, asteroids);
 }
