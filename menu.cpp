@@ -21,16 +21,19 @@ MenuUI InitMenuUI();
 static float height;
 static float width1;
 bool music = true;
+Texture2D backgroundTexture;
 MenuOptions menuOptions = MenuOptions::menu;
+static constexpr Color NEONCYAN = CLITERAL(Color){4, 217, 255, 255};
+static constexpr Color DIFDARKGRAY = CLITERAL(Color){40, 40, 40, 180};
 
 void Menu()
 {
     int screenWidth = 1280;
     int screenHeight = 960;
-    const char Title[] = "Asteroids";
+    constexpr char Title[] = "Asteroids";
 
     InitWindow(screenWidth, screenHeight, Title);
-
+    backgroundTexture = LoadTexture("res/asteroids_background.png");
     height = static_cast<float>(GetScreenHeight());
     width1 = static_cast<float>(GetScreenHeight()) / 15.0f;
 
@@ -81,11 +84,8 @@ void MainMenu()
     for (int i = static_cast<int>(MenuOptions::exit); i != static_cast<int>(MenuOptions::menu); --i)
     {
         menuRectangles[i] = {
-            menuUI.xRepos,
-            static_cast<float>(GetScreenHeight()) - menuUI.yPosition * (static_cast<int>(MenuOptions::exit) -
-                static_cast<float>(i) + 1.45f)
-            + menuUI.yRepos,
-            static_cast<float>(menuUI.fontSize) * 3.9f, static_cast<float>(menuUI.fontSize)
+            menuUI.xRepos,static_cast<float>(GetScreenHeight()) - menuUI.yPosition * (static_cast<int>(MenuOptions::exit) -
+                static_cast<float>(i) + 1.45f)+ menuUI.yRepos,static_cast<float>(menuUI.fontSize) * 3.9f, static_cast<float>(menuUI.fontSize)
         };
     }
 
@@ -120,14 +120,16 @@ void MainMenu()
 
 void DrawMainMenu(MenuUI menuUI, Rectangle menuRectangles[])
 {
-    const Color NEONCYAN = CLITERAL(Color){4, 217, 255, 255};
-
     BeginDrawing();
-
+    ClearBackground(BLACK);
+    DrawBackground();
+    
     for (int i = static_cast<int>(MenuOptions::exit); i != static_cast<int>(MenuOptions::menu); --i)
     {
-        DrawRectangleRec(menuRectangles[i],
-                         CheckCollisionPointRec(GetMousePosition(), menuRectangles[i]) ? DARKGRAY : BLACK);
+        if(CheckCollisionPointRec(GetMousePosition(), menuRectangles[i]))
+        {
+            DrawRectangleRec(menuRectangles[i], DIFDARKGRAY);
+        }
     }
 
     DrawText("Asteroids", GetScreenWidth() / 2 - MeasureText("Asteroids", GetScreenHeight() / 7) / 2,
@@ -142,9 +144,7 @@ void DrawMainMenu(MenuUI menuUI, Rectangle menuRectangles[])
                      i))),
                  menuUI.fontSize, NEONCYAN);
     }
-
-    ClearBackground(BLACK);
-
+    
     EndDrawing();
 }
 
@@ -191,13 +191,16 @@ void OptionsMenu(int& screenWidth, int& screenHeight)
 
 void DrawOptions(Rectangle backBackRec, Rectangle screenSizeA, Rectangle screenSizeB, Rectangle backgroundMuic)
 {
-    const Color NEONCYAN = CLITERAL(Color){4, 217, 255, 255};
+    
     const int xPos = GetScreenWidth() / 15;
     const int fontSize = GetScreenHeight() / 30;
     const int fontSize1 = static_cast<int>(static_cast<float>(fontSize) * 1.5f);
 
     BeginDrawing();
-
+    
+    ClearBackground(BLACK);
+    DrawBackground();
+    
     const string optionsTitle = "OPTIONS";
     const string optionsChangeSize = "Cambiar resolucion de pantalla";
     const string optionsSizeA = "1280x920";
@@ -207,11 +210,23 @@ void DrawOptions(Rectangle backBackRec, Rectangle screenSizeA, Rectangle screenS
     string isMusicActive = music ? "[a]" : "[ ]";
     const string rulesBack = "Back";
 
-    DrawRectangleRec(backBackRec, CheckCollisionPointRec(GetMousePosition(), backBackRec) ? DARKGRAY : BLACK);
-    DrawRectangleRec(screenSizeA, CheckCollisionPointRec(GetMousePosition(), screenSizeA) ? DARKGRAY : BLACK);
-    DrawRectangleRec(screenSizeB, CheckCollisionPointRec(GetMousePosition(), screenSizeB) ? DARKGRAY : BLACK);
-    DrawRectangleRec(backgroundMuic, CheckCollisionPointRec(GetMousePosition(), backgroundMuic) ? DARKGRAY : BLACK);
-    //DrawRectangleRec(twoPlayers, CheckCollisionPointRec(GetMousePosition(), twoPlayers) ? DARKGRAY : BLACK);
+    if(CheckCollisionPointRec(GetMousePosition(), backBackRec))
+    {
+        DrawRectangleRec(backBackRec, DIFDARKGRAY );
+    }
+    if(CheckCollisionPointRec(GetMousePosition(), screenSizeA))
+    {
+        DrawRectangleRec(screenSizeA, DIFDARKGRAY);
+    }
+    if(CheckCollisionPointRec(GetMousePosition(), screenSizeB))
+    {
+        DrawRectangleRec(screenSizeB, DIFDARKGRAY);
+    }
+    if(CheckCollisionPointRec(GetMousePosition(), backgroundMuic))
+    {
+        DrawRectangleRec(backgroundMuic, DIFDARKGRAY);
+    }
+    //DrawRectangleRec(twoPlayers, CheckCollisionPointRec(GetMousePosition(), twoPlayers) ? DIFDARKGRAY : BLACK);
 
     DrawText(optionsTitle.c_str(), xPos, GetScreenHeight() / 9, static_cast<int>(static_cast<float>(fontSize) * 2.3f),
              WHITE);
@@ -223,9 +238,7 @@ void DrawOptions(Rectangle backBackRec, Rectangle screenSizeA, Rectangle screenS
     DrawText(isMusicActive.c_str(), static_cast<int>(static_cast<float>(MeasureText(backgroundMusic.c_str(),fontSize1)) * 1.3f), static_cast<int>(height / 2.2f),
              fontSize1, NEONCYAN);
     DrawText(rulesBack.c_str(), xPos, static_cast<int>(height / 1.8f), fontSize * 2, WHITE);
-
-    ClearBackground(BLACK);
-
+    
     EndDrawing();
 }
 
@@ -249,12 +262,14 @@ void RulesMenu()
 
 void DrawRules(Rectangle backRulesRec)
 {
-    constexpr Color NEONCYAN = CLITERAL(Color){4, 217, 255, 255};
     const int fontSize = GetScreenHeight() / 30;
     const int xPos = GetScreenWidth() / 15;
 
     BeginDrawing();
 
+    ClearBackground(BLACK);
+    DrawBackground();
+    
     const string rulesTitle = "REGLAS";
     const string rules1P = "-Movimiento: WS. Volver al menu: ESC";
     const string rules2P = "Dos Jugadores:\n-movimiento: WS y flecha hacia arriba y abajo";
@@ -262,7 +277,10 @@ void DrawRules(Rectangle backRulesRec)
     //const string rulesPowerUpB = "-Grow Bar: Hace que la paleta crezca. Se resetea cada 8 segundos.";
     const string rulesBack = "Back";
 
-    DrawRectangleRec(backRulesRec, CheckCollisionPointRec(GetMousePosition(), backRulesRec) ? DARKGRAY : BLACK);
+    if(CheckCollisionPointRec(GetMousePosition(), backRulesRec))
+    {
+        DrawRectangleRec(backRulesRec, DIFDARKGRAY);
+    }
 
     DrawText(rulesTitle.c_str(), xPos, GetScreenHeight() / 9, fontSize * 2, WHITE);
     DrawText(rules1P.c_str(), xPos, GetScreenHeight() / 5, fontSize, NEONCYAN);
@@ -270,9 +288,7 @@ void DrawRules(Rectangle backRulesRec)
     //DrawText(rulesPowerUpA.c_str(), xPos, GetScreenHeight() / 2, fontSize * 0.9f, NEONCYAN);
     //DrawText(rulesPowerUpB.c_str(), xPos, GetScreenHeight() / 1.7, fontSize, NEONCYAN);
     DrawText(rulesBack.c_str(), xPos, GetScreenHeight() / 2, fontSize * 2, WHITE);
-
-    ClearBackground(BLACK);
-
+    
     EndDrawing();
 }
 
@@ -296,27 +312,41 @@ void CreditsMenu()
 
 void DrawCredits(Rectangle backCreditsRec)
 {
-    const Color NEONCYAN = CLITERAL(Color){4, 217, 255, 255};
     const int xPos = GetScreenWidth() / 15;
     const int yPos1 = static_cast<int>(static_cast<float>(GetScreenHeight()) / 2.7f);
     const int fontSize = GetScreenHeight() / 30;
     const int fontSize1 = static_cast<int>(static_cast<float>(fontSize) * 1.5f);
+    
     BeginDrawing();
-
+    
+    ClearBackground(BLACK);
+    DrawBackground();
+    
     const string creditsTitle = "MADE BY";
     const string creditsCredit = "SantiagoBarra";
     const string creditsColor = "Main Color:";
     const string creditsColorCode = " Neon Cyan {4, 217, 255}";
     const string rulesBack = "Back";
 
-    DrawRectangleRec(backCreditsRec, CheckCollisionPointRec(GetMousePosition(), backCreditsRec) ? DARKGRAY : BLACK);
+    if(CheckCollisionPointRec(GetMousePosition(), backCreditsRec))
+    {
+    DrawRectangleRec(backCreditsRec, DIFDARKGRAY);
+    }
 
     DrawText(creditsTitle.c_str(), xPos, GetScreenHeight() / 9, fontSize * 2, WHITE);
     DrawText(creditsCredit.c_str(), xPos, GetScreenHeight() / 5, fontSize * 4, NEONCYAN);
     DrawText(creditsColor.c_str(), xPos, yPos1, fontSize1, WHITE);
     DrawText(creditsColorCode.c_str(), xPos * 4, yPos1, fontSize1, NEONCYAN);
     DrawText(rulesBack.c_str(), xPos, GetScreenHeight() / 2, fontSize * 2, WHITE);
-    ClearBackground(BLACK);
 
     EndDrawing();
+}
+void DrawBackground()
+{
+    const float frameWidth = static_cast<float>(GetScreenWidth());
+    const float frameHeight = static_cast<float>(GetScreenHeight());
+    const Rectangle sourceRec = { 0,0,frameWidth,frameHeight};
+    const Vector2 origin = {0,0};
+    
+    DrawTexturePro(backgroundTexture, sourceRec, {0,0, static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight())}, origin, 0, RAYWHITE);
 }

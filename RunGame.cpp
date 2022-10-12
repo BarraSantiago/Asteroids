@@ -23,12 +23,13 @@ void SpawnBigAsteroids(std::vector<Asteroid>& asteroids, int quantity, Circle sp
 #pragma endregion
 
 #pragma region globalVariables
+extern Texture2D backgroundTexture;
 static Texture2D spaceshipTexture;
-Texture2D bulletTexture;
 static Texture2D asteroidsTexture;
+Texture2D bulletTexture;
 static Sound shooting;
 static Sound hit;
-Music backgrounMusic;
+static Music backgrounMusic;
 static float damagedTimer;
 
 extern bool music;
@@ -41,7 +42,8 @@ void RunGame()
 #pragma region declarations
     InitAudioDevice();
     SetMasterVolume(0.07f);
-    
+
+
     asteroidsTexture = LoadTexture("res/asteroids_asteroids.png");
     spaceshipTexture = LoadTexture("res/asteroids_spaceship.png");
     bulletTexture = LoadTexture("res/spaceship_bullet.png");
@@ -59,13 +61,11 @@ void RunGame()
 
     SpawnBigAsteroids(asteroids, 10, player.body);
     
-    Vector2 mousePos {};
-
 #pragma endregion
 
     while (!WindowShouldClose())// && player.isAlive)
     {
-        mousePos = GetMousePosition();
+        Vector2 mousePos = GetMousePosition();
         CheckCollisions(asteroids, bullets, player);
         Update(asteroids, bullets, player);
         DrawGame( asteroids, bullets, player, mousePos);
@@ -74,6 +74,7 @@ void RunGame()
     {
         //DEAD SCREEN
     }
+    UnloadTexture(backgroundTexture);
     UnloadTexture(spaceshipTexture);
     UnloadTexture(bulletTexture);
     UnloadTexture(asteroidsTexture);
@@ -103,6 +104,7 @@ void DrawGame( vector<Asteroid> asteroids, Bullet bullets[], Spaceship spaceship
 {
     BeginDrawing();
     ClearBackground(BLACK);
+    DrawBackground();
     DrawLine(static_cast<int>(mousePos.x), static_cast<int>(mousePos.y), static_cast<int>(spaceship.body.x),
              static_cast<int>(spaceship.body.y), WHITE);
     DrawBullets(bullets);
@@ -110,6 +112,8 @@ void DrawGame( vector<Asteroid> asteroids, Bullet bullets[], Spaceship spaceship
     DrawAsteroids(asteroids, asteroidsTexture);
     EndDrawing();
 }
+
+
 
 void Update(vector<Asteroid>& asteroids, Bullet bullets[], Spaceship& spaceship)
 {

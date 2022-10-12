@@ -83,8 +83,8 @@ Spaceship InitSpaceship()
     body.x = static_cast<float>(GetScreenWidth()) / 2.0f;
     body.y = static_cast<float>(GetScreenHeight()) / 2.0f;
     body.radius = static_cast<float>(GetScreenWidth()) / 30.0f;
-    float aceleration = 0;
-    int lives = 3;
-    bool isAlive = true;
+    constexpr float aceleration = 0;
+    constexpr int lives = 3;
+    constexpr bool isAlive = true;
     return {body, {aceleration, aceleration}, lives, isAlive};
 }

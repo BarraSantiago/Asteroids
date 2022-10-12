@@ -20,3 +20,4 @@ struct MenuUI
 };
 
 void Menu();
+void DrawBackground();

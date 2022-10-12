@@ -49,6 +49,5 @@ void DrawBullet(Bullet bullet)
     const Vector2 origin = {bullet.body.radius , bullet.body.radius};
     
     DrawTexturePro(bulletTexture, sourceRec, {bullet.body.x, bullet.body.y, bullet.body.radius*2, bullet.body.radius*2}, origin, 0, RAYWHITE);
-    
-    //DrawCircle(static_cast<int>(bullet.body.x), static_cast<int>(bullet.body.y),bullet.body.radius, RED);
+    DrawCircleLines(static_cast<int>(bullet.body.x), static_cast<int>(bullet.body.y),bullet.body.radius, RED);
 }
