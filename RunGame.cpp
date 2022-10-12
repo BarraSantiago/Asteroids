@@ -11,12 +11,12 @@ using namespace std;
 #pragma region functions
 void UpdateBullets(Bullet bullets[]);
 void UpdateAsteroids(vector<Asteroid>& asteroids);
-void UpdateSpaceship(Spaceship& spaceship, Bullet bullets[]);
-void DrawGame(Spaceship spaceship, Vector2 mousePos, Bullet bullets[], vector<Asteroid> asteroids);
-void CheckBulletAsteroidCollision(Bullet bullets[], vector<Asteroid>& asteroids);
-void CheckAsteroidPlayerCollision(Spaceship& spaceship, vector<Asteroid> asteroids);
-void Update(Bullet bullets[], vector<Asteroid>& asteroids, Spaceship& spaceship);
-void CheckCollisions(Bullet bullets[], vector<Asteroid>& asteroids, Spaceship& spaceship);
+void UpdateSpaceship( Bullet bullets[], Spaceship& spaceship);
+void DrawGame(vector<Asteroid> asteroids, Bullet bullets[], Spaceship spaceship, Vector2 mousePos);
+void CheckBulletAsteroidCollision(vector<Asteroid>& asteroids, Bullet bullets[] );
+void CheckAsteroidPlayerCollision(vector<Asteroid> asteroids, Spaceship& spaceship);
+void Update(vector<Asteroid>& asteroids, Bullet bullets[], Spaceship& spaceship);
+void CheckCollisions(vector<Asteroid>& asteroids, Bullet bullets[], Spaceship& spaceship);
 bool CircleCircleCollision(Circle c1, Circle c2);
 void SpawnBigAsteroids(std::vector<Asteroid>& asteroids, int quantity, Circle spaceship);
 #pragma endregion
@@ -36,11 +36,15 @@ void RunGame()
 #pragma region declarations
     InitAudioDevice();
     SetMasterVolume(0.07f);
-    spaceshipTexture = LoadTexture("res/asteroids_spaceship.png");
+    
     asteroidsTexture = LoadTexture("res/asteroids_asteroids.png");
+    spaceshipTexture = LoadTexture("res/asteroids_spaceship.png");
     bulletTexture = LoadTexture("res/spaceship_bullet.png");
     shooting =  LoadSound("res/spaceship_shoot.wav");
     hit =  LoadSound("res/spaceship_hit.wav");
+
+    const Music backgrounMusic = LoadMusicStream("res/backgroundMusic.wav");
+    PlayMusicStream(backgrounMusic);
     
     Bullet bullets[9];
 
@@ -56,10 +60,11 @@ void RunGame()
 
     while (!WindowShouldClose())// && player.isAlive)
     {
+        UpdateMusicStream(backgrounMusic);
         mousePos = GetMousePosition();
-        CheckCollisions(bullets, asteroids, player);
-        Update(bullets, asteroids, player);
-        DrawGame(player, mousePos, bullets, asteroids);
+        CheckCollisions(asteroids, bullets, player);
+        Update(asteroids, bullets, player);
+        DrawGame( asteroids, bullets, player, mousePos);
     }
     if(!player.isAlive)
     {
@@ -90,7 +95,7 @@ void SpawnBigAsteroids(std::vector<Asteroid>& asteroids, int quantity, Circle sp
     }
 }
 
-void DrawGame(Spaceship spaceship, Vector2 mousePos, Bullet bullets[], vector<Asteroid> asteroids)
+void DrawGame( vector<Asteroid> asteroids, Bullet bullets[], Spaceship spaceship, Vector2 mousePos)
 {
     BeginDrawing();
     ClearBackground(BLACK);
@@ -102,11 +107,11 @@ void DrawGame(Spaceship spaceship, Vector2 mousePos, Bullet bullets[], vector<As
     EndDrawing();
 }
 
-void Update(Bullet bullets[], vector<Asteroid>& asteroids, Spaceship& spaceship)
+void Update(vector<Asteroid>& asteroids, Bullet bullets[], Spaceship& spaceship)
 {
     UpdateAsteroids(asteroids);
     UpdateBullets(bullets);
-    UpdateSpaceship(spaceship, bullets);
+    UpdateSpaceship(bullets, spaceship);
 }
 
 void UpdateBullets(Bullet bullets[])
@@ -140,7 +145,7 @@ void UpdateAsteroids(vector<Asteroid>& asteroids)
     }
 }
 
-void UpdateSpaceship(Spaceship& spaceship, Bullet bullets[])
+void UpdateSpaceship(Bullet bullets[], Spaceship& spaceship)
 {
     Vector2 mousePos = GetMousePosition();
     spaceship.rotation = RepositionSpaceship(spaceship.body);
@@ -152,13 +157,13 @@ void UpdateSpaceship(Spaceship& spaceship, Bullet bullets[])
     }
 }
 
-void CheckCollisions(Bullet bullets[], vector<Asteroid>& asteroids, Spaceship& spaceship)
+void CheckCollisions( vector<Asteroid>& asteroids, Bullet bullets[], Spaceship& spaceship)
 {
-    CheckBulletAsteroidCollision(bullets, asteroids);
-    CheckAsteroidPlayerCollision(spaceship, asteroids);
+    CheckBulletAsteroidCollision( asteroids, bullets);
+    CheckAsteroidPlayerCollision(asteroids, spaceship);
 }
 
-void CheckBulletAsteroidCollision(Bullet bullets[], vector<Asteroid>& asteroids)
+void CheckBulletAsteroidCollision( vector<Asteroid>& asteroids, Bullet bullets[])
 {
     for (int j = 0; j < static_cast<int>(sizeof(bullets)) - 1; ++j)
     {
@@ -176,7 +181,7 @@ void CheckBulletAsteroidCollision(Bullet bullets[], vector<Asteroid>& asteroids)
     }
 }
 
-void CheckAsteroidPlayerCollision(Spaceship& spaceship, vector<Asteroid> asteroids)
+void CheckAsteroidPlayerCollision(vector<Asteroid> asteroids, Spaceship& spaceship)
 {
     if (damagedTimer<=0)
     {
