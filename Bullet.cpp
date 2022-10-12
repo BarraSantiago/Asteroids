@@ -3,6 +3,7 @@
 #include <raymath.h>
 
 void DrawBullet(Bullet bullet);
+extern Texture2D bulletTexture;
 
 void Shoot(Circle player, Vector2 mousePos, Bullet bullets[])
 {
@@ -42,6 +43,12 @@ void DrawBullets(Bullet bullets[])
 
 void DrawBullet(Bullet bullet)
 {
-    DrawCircle(static_cast<int>(bullet.body.x), static_cast<int>(bullet.body.y), static_cast<float>(bullet.body.radius),
-               RED);
+    const float frameWidth = static_cast<float>(bulletTexture.width);
+    const float frameHeight = static_cast<float>(bulletTexture.height);
+    const Rectangle sourceRec = { 0,0,frameWidth,frameHeight};
+    const Vector2 origin = {bullet.body.radius , bullet.body.radius};
+    
+    DrawTexturePro(bulletTexture, sourceRec, {bullet.body.x, bullet.body.y, bullet.body.radius*2, bullet.body.radius*2}, origin, 0, RAYWHITE);
+    
+    //DrawCircle(static_cast<int>(bullet.body.x), static_cast<int>(bullet.body.y),bullet.body.radius, RED);
 }

@@ -8,33 +8,47 @@
 
 using namespace std;
 
-#pragma region functionDec
+#pragma region functions
 void UpdateBullets(Bullet bullets[]);
 void UpdateAsteroids(vector<Asteroid>& asteroids);
-void DrawGame(Circle player, float playerRotation, Vector2 mousePos, Bullet bullets[], vector<Asteroid> asteroids, Texture2D astTexture, Texture2D spaTexture);
+void UpdateSpaceship(Spaceship& spaceship, Bullet bullets[]);
+void DrawGame(Spaceship spaceship, Vector2 mousePos, Bullet bullets[], vector<Asteroid> asteroids);
 void CheckBulletAsteroidCollision(Bullet bullets[], vector<Asteroid>& asteroids);
 void CheckAsteroidPlayerCollision(Spaceship& spaceship, vector<Asteroid> asteroids);
-void UpdateObjects(Bullet bullets[], vector<Asteroid>& asteroids);
+void Update(Bullet bullets[], vector<Asteroid>& asteroids, Spaceship& spaceship);
 void CheckCollisions(Bullet bullets[], vector<Asteroid>& asteroids, Spaceship& spaceship);
 bool CircleCircleCollision(Circle c1, Circle c2);
+void SpawnBigAsteroids(std::vector<Asteroid>& asteroids, int quantity, Circle spaceship);
 #pragma endregion
 
+#pragma region globalVariables
+static Texture2D spaceshipTexture;
+Texture2D bulletTexture;
+static Texture2D asteroidsTexture;
+static Sound shooting;
+static Sound hit;
 static float damagedTimer;
+#pragma endregion
+
 void RunGame()
 {
     
 #pragma region declarations
-    const Texture2D spaceshipTexture = LoadTexture("res/asteroids_spaceship.png");
-    const Texture2D asteroidsTexture = LoadTexture("res/asteroids_asteroids.png");
     InitAudioDevice();
-    Sound shooting =  LoadSound("res/spaceship_shoot.wav");
+    SetMasterVolume(0.07f);
+    spaceshipTexture = LoadTexture("res/asteroids_spaceship.png");
+    asteroidsTexture = LoadTexture("res/asteroids_asteroids.png");
+    bulletTexture = LoadTexture("res/spaceship_bullet.png");
+    shooting =  LoadSound("res/spaceship_shoot.wav");
+    hit =  LoadSound("res/spaceship_hit.wav");
+    
     Bullet bullets[9];
 
     vector<Asteroid> asteroids;
 
-    SpawnBigAsteroids(asteroids, 10);
-
     Spaceship player = InitSpaceship();
+
+    SpawnBigAsteroids(asteroids, 10, player.body);
     
     Vector2 mousePos {};
 
@@ -43,44 +57,56 @@ void RunGame()
     while (!WindowShouldClose())// && player.isAlive)
     {
         mousePos = GetMousePosition();
-        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-        {
-            Shoot(player.body, mousePos, bullets);
-            PlaySound(shooting);
-        }
-        player.rotation = RepositionSpaceship(player.body);
         CheckCollisions(bullets, asteroids, player);
-        UpdateObjects(bullets, asteroids);
-        MovePlayer(player, mousePos);
-        DrawGame(player.body, player.rotation, mousePos, bullets, asteroids, asteroidsTexture, spaceshipTexture);
+        Update(bullets, asteroids, player);
+        DrawGame(player, mousePos, bullets, asteroids);
     }
     if(!player.isAlive)
     {
         //DEAD SCREEN
     }
     UnloadTexture(spaceshipTexture);
+    UnloadTexture(bulletTexture);
     UnloadTexture(asteroidsTexture);
     UnloadSound(shooting);
+    UnloadSound(hit);
     CloseAudioDevice();
     CloseWindow();
 }
 
-void DrawGame(Circle player, float playerRotation, Vector2 mousePos, Bullet bullets[], vector<Asteroid> asteroids, Texture2D astTexture, Texture2D spaTexture)
+void SpawnBigAsteroids(std::vector<Asteroid>& asteroids, int quantity, Circle spaceship)
+{
+    float x, y;
+    for (int i = 0; i < quantity; ++i)
+    {
+        x = static_cast<float>(GetRandomValue(-GetScreenWidth() / 20,GetScreenWidth() + GetScreenWidth() / 20));
+        y = static_cast<float>(GetRandomValue(-GetScreenHeight() / 20,GetScreenHeight() + GetScreenHeight() / 20));
+        if(CircleCircleCollision(spaceship,{x,y,static_cast<float>(GetScreenWidth()) / 10.0f}))
+        {
+            i--;
+            continue;
+        } 
+            asteroids.push_back(InitAsteroid({x, y}, AsteroidSize::Large));
+    }
+}
+
+void DrawGame(Spaceship spaceship, Vector2 mousePos, Bullet bullets[], vector<Asteroid> asteroids)
 {
     BeginDrawing();
     ClearBackground(BLACK);
-    DrawLine(static_cast<int>(mousePos.x), static_cast<int>(mousePos.y), static_cast<int>(player.x),
-             static_cast<int>(player.y), WHITE);
+    DrawLine(static_cast<int>(mousePos.x), static_cast<int>(mousePos.y), static_cast<int>(spaceship.body.x),
+             static_cast<int>(spaceship.body.y), WHITE);
     DrawBullets(bullets);
-    DrawSpaceship(player, playerRotation, spaTexture);
-    DrawAsteroids(asteroids, astTexture);
+    DrawSpaceship(spaceship.body, spaceship.rotation, spaceshipTexture);
+    DrawAsteroids(asteroids, asteroidsTexture);
     EndDrawing();
 }
 
-void UpdateObjects(Bullet bullets[], vector<Asteroid>& asteroids)
+void Update(Bullet bullets[], vector<Asteroid>& asteroids, Spaceship& spaceship)
 {
     UpdateAsteroids(asteroids);
     UpdateBullets(bullets);
+    UpdateSpaceship(spaceship, bullets);
 }
 
 void UpdateBullets(Bullet bullets[])
@@ -111,6 +137,18 @@ void UpdateAsteroids(vector<Asteroid>& asteroids)
             asteroids[i].body.y += velocity.y;
             WarpAsteroid(asteroids[i]);
         }
+    }
+}
+
+void UpdateSpaceship(Spaceship& spaceship, Bullet bullets[])
+{
+    Vector2 mousePos = GetMousePosition();
+    spaceship.rotation = RepositionSpaceship(spaceship.body);
+    MovePlayer(spaceship, mousePos);
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+    {
+        Shoot(spaceship.body, mousePos, bullets);
+        PlaySound(shooting);
     }
 }
 
@@ -149,6 +187,7 @@ void CheckAsteroidPlayerCollision(Spaceship& spaceship, vector<Asteroid> asteroi
                 if (CircleCircleCollision(spaceship.body, asteroids[i].body))
                 {
                     spaceship.lives--;
+                    PlaySound(hit);
                     damagedTimer = 1.5f;
                     if (spaceship.lives <= 0)
                     {

@@ -62,19 +62,6 @@ void DrawAsteroid(Asteroid asteroid, Texture2D texture)
     rotation += 1*GetFrameTime();
 }
 
-void SpawnBigAsteroids(std::vector<Asteroid>& asteroids, int quantity)
-{
-    for (int i = 0; i < quantity; ++i)
-    {
-
-        float x = static_cast<float>(GetRandomValue(-GetScreenWidth() / 20,
-                                                            GetScreenWidth() + GetScreenWidth() / 20));
-        float y = static_cast<float>(GetRandomValue(-GetScreenWidth() / 20,
-                                                            GetScreenHeight() + GetScreenWidth() / 20));
-        asteroids.push_back(InitAsteroid({x, y}, AsteroidSize::Large));
-    }
-}
-
 void SpawnAsteroid(std::vector<Asteroid>& asteroids, int vecPosition)
 {
     const Vector2 mapPosition = {asteroids[vecPosition].body.x, asteroids[vecPosition].body.y};

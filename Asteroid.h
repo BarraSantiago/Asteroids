@@ -22,6 +22,6 @@ struct Asteroid
 
 
 void DrawAsteroids(std::vector<Asteroid> asteroids, Texture2D texture);
-void SpawnBigAsteroids(std::vector<Asteroid>& asteroids, int quantity);
+Asteroid InitAsteroid(Vector2 position,  AsteroidSize size);
 void WarpAsteroid(Asteroid& asteroid);
 void SpawnAsteroid(std::vector<Asteroid>& asteroids, int vecPosition);
