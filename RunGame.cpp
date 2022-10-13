@@ -14,15 +14,20 @@ using namespace std;
 void UpdateBullets(Bullet bullets[]);
 void UpdateAsteroids(vector<Asteroid>& asteroids, Spaceship spaceship);
 void UpdateSpaceship(Bullet bullets[], Spaceship& spaceship);
+void PowerUp();
 void DrawGame(vector<Asteroid> asteroids, Bullet bullets[], Spaceship spaceship, Vector2 mousePos);
+void DrawPowerUp();
+void DrawShield(Spaceship spaceship);
 void CheckBulletAsteroidCollision(vector<Asteroid>& asteroids, Bullet bullets[]);
 void CheckAsteroidPlayerCollision(vector<Asteroid> asteroids, Spaceship& spaceship);
+void CheckPowerUpPlayerCollision(Spaceship spaceship);
 void Update(vector<Asteroid>& asteroids, Bullet bullets[], Spaceship& spaceship);
 void CheckCollisions(vector<Asteroid>& asteroids, Bullet bullets[], Spaceship& spaceship);
 bool CircleCircleCollision(Circle c1, Circle c2);
 void SpawnBigAsteroids(std::vector<Asteroid>& asteroids, int quantity, Circle spaceship);
 void LoadResources();
 void UnloadResources();
+void LoseScreen();
 #pragma endregion
 
 #pragma region globalVariables
@@ -31,16 +36,23 @@ static Texture2D spaceshipTexture;
 static Texture2D asteroidsTexture;
 static Texture2D specialAsteroidsTexture;
 Texture2D bulletTexture;
+
+static Circle powerUp1;
+
 static Sound shooting;
 static Sound hit;
 static Music backgrounMusic;
 
 static int score;
-static float damagedTimer;
+static float damagedTimer = 0;
+static float powerUp1Timer = 7.0f;
 static float specialTimer = 5.0f;
 
 extern bool music;
 extern bool sound;
+extern bool debugMode;
+static bool isPowerUp1;
+
 extern MenuOptions menuOptions;
 
 #pragma endregion
@@ -54,29 +66,44 @@ void RunGame()
     LoadResources();
 
     Bullet bullets[50];
-
+    damagedTimer = 0;
     vector<Asteroid> asteroids;
 
     Spaceship player = InitSpaceship();
-
+    Vector2 mousePos = GetMousePosition();
     SpawnBigAsteroids(asteroids, 10, player.body);
 #pragma endregion
 
     while (!WindowShouldClose() && player.isAlive)
     {
-        Vector2 mousePos = GetMousePosition();
+        mousePos = GetMousePosition();
         CheckCollisions(asteroids, bullets, player);
         Update(asteroids, bullets, player);
         DrawGame(asteroids, bullets, player, mousePos);
     }
     if (!player.isAlive)
     {
-        //DEAD SCREEN
+        while (!WindowShouldClose())
+        {
+            LoseScreen();
+        }
     }
 
     UnloadResources();
     CloseAudioDevice();
     menuOptions = MenuOptions::menu;
+}
+
+void LoseScreen()
+{
+    constexpr Color AltRed = {230, 41, 55, 80};
+    BeginDrawing();
+    DrawBackground();
+    DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), AltRed);
+    DrawText("You Lost!\nPress Esc to return to menu",
+             GetScreenWidth() / 2 - MeasureText("Press Esc to return to menu", GetScreenWidth() / 24) / 2,
+             GetScreenHeight() / 3, GetScreenWidth() / 24, BLUE);
+    EndDrawing();
 }
 
 void LoadResources()
@@ -85,7 +112,6 @@ void LoadResources()
     specialAsteroidsTexture = LoadTexture("res/asteroids_special.png");
     spaceshipTexture = LoadTexture("res/asteroids_spaceship.png");
     bulletTexture = LoadTexture("res/spaceship_bullet.png");
-
     if (sound)
     {
         shooting = LoadSound("res/spaceship_shoot.wav");
@@ -124,13 +150,12 @@ void SpawnBigAsteroids(std::vector<Asteroid>& asteroids, int quantity, Circle sp
     }
 }
 
-extern bool debugMode;
-
 void DrawGame(vector<Asteroid> asteroids, Bullet bullets[], Spaceship spaceship, Vector2 mousePos)
 {
     BeginDrawing();
     ClearBackground(BLACK);
     DrawBackground();
+    DrawPowerUp();
     if (debugMode)
     {
         DrawLine(static_cast<int>(mousePos.x), static_cast<int>(mousePos.y), static_cast<int>(spaceship.body.x),
@@ -138,14 +163,34 @@ void DrawGame(vector<Asteroid> asteroids, Bullet bullets[], Spaceship spaceship,
     }
     DrawBullets(bullets);
     DrawSpaceship(spaceship.body, spaceship.rotation, spaceshipTexture);
+    DrawShield(spaceship);
     DrawAsteroids(asteroids, asteroidsTexture, specialAsteroidsTexture);
     DrawLives(spaceshipTexture, spaceship.lives);
     EndDrawing();
 }
 
+void DrawPowerUp()
+{
+    constexpr Color altBlue = {0, 121, 241, 130};
+    if (isPowerUp1)
+    {
+        DrawCircle(static_cast<int>(powerUp1.x), static_cast<int>(powerUp1.y), powerUp1.radius, altBlue);
+    }
+}
+
+void DrawShield(Spaceship spaceship)
+{
+    constexpr Color altBlue = {0, 121, 241, 130};
+    if (damagedTimer > 0)
+    {
+        DrawCircle(static_cast<int>(spaceship.body.x), static_cast<int>(spaceship.body.y), spaceship.body.radius,
+                   altBlue);
+    }
+}
 
 void Update(vector<Asteroid>& asteroids, Bullet bullets[], Spaceship& spaceship)
 {
+    PowerUp();
     UpdateAsteroids(asteroids, spaceship);
     UpdateBullets(bullets);
     UpdateSpaceship(bullets, spaceship);
@@ -176,19 +221,21 @@ void UpdateAsteroids(vector<Asteroid>& asteroids, Spaceship spaceship)
     {
         if (asteroids[i].isActive)
         {
-            if (asteroids[i].size<AsteroidSize::SpecialS)
+            if (asteroids[i].size < AsteroidSize::SpecialS)
             {
-            Vector2 velocity = {
-                GetFrameTime() * asteroids[i].direction.x * asteroids[i].speed,
-                GetFrameTime() * asteroids[i].direction.y * asteroids[i].speed
-            };
-            asteroids[i].body.x += velocity.x;
-            asteroids[i].body.y += velocity.y;
-            WarpAsteroid(asteroids[i]);
+                Vector2 velocity = {
+                    GetFrameTime() * asteroids[i].direction.x * asteroids[i].speed,
+                    GetFrameTime() * asteroids[i].direction.y * asteroids[i].speed
+                };
+                asteroids[i].body.x += velocity.x;
+                asteroids[i].body.y += velocity.y;
+                WarpAsteroid(asteroids[i]);
             }
             else
             {
-                asteroids[i].direction = {spaceship.body.x-asteroids[i].body.x, spaceship.body.y-asteroids[i].body.y};
+                asteroids[i].direction = {
+                    spaceship.body.x - asteroids[i].body.x, spaceship.body.y - asteroids[i].body.y
+                };
                 asteroids[i].direction = Vector2Normalize(asteroids[i].direction);
                 Vector2 velocity = {
                     GetFrameTime() * asteroids[i].direction.x * asteroids[i].speed,
@@ -201,7 +248,9 @@ void UpdateAsteroids(vector<Asteroid>& asteroids, Spaceship spaceship)
     }
     if (specialTimer <= 0)
     {
-        asteroids.push_back({{0,0, GetScreenWidth()/20.0f},AsteroidSize::SpecialL, {0,0},130, true});
+        asteroids.push_back({
+            {0, 0, static_cast<float>(GetScreenWidth()) / 20.0f}, AsteroidSize::SpecialL, {0, 0}, 130, true
+        });
         specialTimer = 8.0f;
     }
 }
@@ -225,6 +274,17 @@ void CheckCollisions(vector<Asteroid>& asteroids, Bullet bullets[], Spaceship& s
 {
     CheckBulletAsteroidCollision(asteroids, bullets);
     CheckAsteroidPlayerCollision(asteroids, spaceship);
+    CheckPowerUpPlayerCollision(spaceship);
+}
+
+void CheckPowerUpPlayerCollision(Spaceship spaceship)
+{
+    if (CircleCircleCollision(spaceship.body, powerUp1))
+    {
+        isPowerUp1 = false;
+        powerUp1Timer = 13.0f;
+        damagedTimer = 4.0f;
+    }
 }
 
 void CheckBulletAsteroidCollision(vector<Asteroid>& asteroids, Bullet bullets[])
@@ -283,4 +343,19 @@ bool CircleCircleCollision(Circle c1, Circle c2)
     const float distance = sqrt((distX * distX) + (distY * distY));
 
     return distance <= c1.radius + c2.radius;
+}
+
+void PowerUp()
+{
+    if (powerUp1Timer <= 0 && !isPowerUp1)
+    {
+        float x = static_cast<float>(GetRandomValue(0, GetScreenWidth()));
+        float y = static_cast<float>(GetRandomValue(0, GetScreenHeight()));
+        powerUp1 = {x, y, static_cast<float>(GetScreenWidth()) / 35.0f};
+        isPowerUp1 = true;
+    }
+    else
+    {
+        powerUp1Timer -= GetFrameTime();
+    }
 }

@@ -15,15 +15,15 @@ Asteroid InitSpecialAsteroid(Vector2 position,  AsteroidSize size)
     switch (size)
     {
     case AsteroidSize::SpecialS:
-        speed = 135.0f;
+        speed = 170.0f;
         radius = static_cast<float>(GetScreenWidth()) / 75.0f;
         break;
     case AsteroidSize::SpecialM:
-        speed = 150.0f;
+        speed = 190.0f;
         radius = static_cast<float>(GetScreenWidth()) / 40.0f;
         break;
     case AsteroidSize::SpecialL:
-        speed = 175.0f;
+        speed = 200.0f;
         radius = static_cast<float>(GetScreenWidth()) / 20.0f;
         break;
     default: ;
