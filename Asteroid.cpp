@@ -21,12 +21,16 @@ Asteroid InitAsteroid(Vector2 position,  AsteroidSize size)
         speed = 75;
         radius = static_cast<float>(GetScreenWidth()) / 20.0f;
         break;
-    case AsteroidSize::Special:
+        
+    case AsteroidSize::SpecialS:
 
         break;
+    case AsteroidSize::SpecialM: break;
+    case AsteroidSize::SpecialL: break;
     default:
         radius = static_cast<float>(GetScreenWidth()) / 10.0f;
         break;
+
     }
     Circle body = {position.x, position.y, radius};
     Vector2 direction;
@@ -81,9 +85,13 @@ void SpawnAsteroid(std::vector<Asteroid>& asteroids, int vecPosition)
         asteroids[vecPosition] = InitAsteroid(mapPosition, AsteroidSize::Medium);
         asteroids.push_back(InitAsteroid(mapPosition, AsteroidSize::Medium));
         break;
-    case AsteroidSize::Special:
+    case AsteroidSize::SpecialS:
+        break;
+    case AsteroidSize::SpecialM: break;
+    case AsteroidSize::SpecialL: break;
     default:
         break;
+
     }
 }
 

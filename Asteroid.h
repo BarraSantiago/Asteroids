@@ -8,7 +8,9 @@ enum class AsteroidSize
     Small,
     Medium,
     Large,
-    Special
+    SpecialS,
+    SpecialM,
+    SpecialL
 };
 
 struct Asteroid

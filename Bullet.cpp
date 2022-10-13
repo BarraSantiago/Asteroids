@@ -23,9 +23,9 @@ Bullet InitBullet(Circle player, Vector2 mousePos)
 {
     Vector2 direction = {mousePos.x - player.x, mousePos.y - player.y};
     direction = Vector2Normalize(direction);
-    Circle body = {player.x, player.y, static_cast<float>(GetScreenWidth()) / 160.0f};
-    float speed = 500.0f;
-    bool isActive = true;
+    const Circle body = {player.x, player.y, static_cast<float>(GetScreenWidth()) / 160.0f};
+    constexpr float speed = 500.0f;
+    constexpr bool isActive = true;
     return {body, direction, speed, isActive};
 }
 

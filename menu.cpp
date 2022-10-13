@@ -9,7 +9,7 @@ using namespace std;
 void MainMenu();
 void DrawMainMenu(MenuUI menuUI, Rectangle menuRectangles[]);
 void OptionsMenu(int& screenWidth, int& screenHeight);
-void DrawOptions(Rectangle backBackRec, Rectangle screenSizeA, Rectangle screenSizeB, Rectangle backgroundMuic);
+void DrawOptions(Rectangle backBackRec, Rectangle screenSizeA, Rectangle screenSizeB, Rectangle bgMusic, Rectangle soundRec);
 void RulesMenu();
 void DrawRules(Rectangle backRulesRec);
 void CreditsMenu();
@@ -17,14 +17,18 @@ void DrawCredits(Rectangle backCreditsRec);
 MenuUI InitMenuUI();
 #pragma endregion
 
-
+#pragma region globalVariables
 static float height;
 static float width1;
 bool music = true;
+bool sound = true;
+bool debugMode = true;
 Texture2D backgroundTexture;
 MenuOptions menuOptions = MenuOptions::menu;
 static constexpr Color NEONCYAN = CLITERAL(Color){4, 217, 255, 255};
-static constexpr Color DIFDARKGRAY = CLITERAL(Color){40, 40, 40, 180};
+static constexpr Color DIFDARKGRAY = CLITERAL(Color){245, 245, 245, 60};
+Image logo;
+#pragma endregion
 
 void Menu()
 {
@@ -33,9 +37,11 @@ void Menu()
     constexpr char Title[] = "Asteroids";
 
     InitWindow(screenWidth, screenHeight, Title);
+    
     backgroundTexture = LoadTexture("res/asteroids_background.png");
     height = static_cast<float>(GetScreenHeight());
     width1 = static_cast<float>(GetScreenHeight()) / 15.0f;
+    logo = LoadImage("res/asteroids_logo.png");
 
     while (!WindowShouldClose() && menuOptions != MenuOptions::exit)
     {
@@ -63,6 +69,7 @@ void Menu()
             break;
         }
     }
+    UnloadTexture(backgroundTexture);
 }
 
 MenuUI InitMenuUI()
@@ -123,7 +130,7 @@ void DrawMainMenu(MenuUI menuUI, Rectangle menuRectangles[])
     BeginDrawing();
     ClearBackground(BLACK);
     DrawBackground();
-    
+    SetWindowIcon(logo);
     for (int i = static_cast<int>(MenuOptions::exit); i != static_cast<int>(MenuOptions::menu); --i)
     {
         if(CheckCollisionPointRec(GetMousePosition(), menuRectangles[i]))
@@ -153,17 +160,17 @@ void OptionsMenu(int& screenWidth, int& screenHeight)
 {
     const float xPos = static_cast<float>(GetScreenWidth()) / 16.0f;
     const float height2 = static_cast<float>(GetScreenHeight()) / 17.0f;
-    const Rectangle backBackRec = {xPos, height / 1.8f, width1 * 2.5f, width1};
+    const Rectangle backRec = {xPos, height / 1.5f, width1 * 2.5f, width1};
     const Rectangle screenSizeA = {xPos, height / 3.6f, width1 * 3.5f, height2};
     const Rectangle screenSizeB = {xPos * 4.15f, height / 3.6f, width1 * 4.3f, height2};
     const Rectangle backgroundMusic = {xPos - xPos/20.0f, height / 2.22f, width1 * 7.7f, height2};
-    //const Rectangle twoPlayers = {xPos * 4.5f, height / 2.2f, width1 * 4.8f, height2};
+    const Rectangle soundRec = {xPos - xPos/20.0f, height / 1.93f, width1 * 7.7f, height2};
 
-    DrawOptions(backBackRec, screenSizeA, screenSizeB, backgroundMusic);
+    DrawOptions(backRec, screenSizeA, screenSizeB, backgroundMusic, soundRec);
 
     if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON))
     {
-        if (CheckCollisionPointRec(GetMousePosition(), backBackRec))
+        if (CheckCollisionPointRec(GetMousePosition(), backRec))
         {
             menuOptions = MenuOptions::menu;
         }
@@ -183,13 +190,14 @@ void OptionsMenu(int& screenWidth, int& screenHeight)
         {
             music = !music;
         }
-        
-        //else if (CheckCollisionPointRec(GetMousePosition(), twoPlayers))
-          //  p2Active = true;
+        else if (CheckCollisionPointRec(GetMousePosition(), soundRec))
+        {
+            sound = !sound;
+        }
     }
 }
 
-void DrawOptions(Rectangle backBackRec, Rectangle screenSizeA, Rectangle screenSizeB, Rectangle backgroundMuic)
+void DrawOptions(Rectangle backBackRec, Rectangle screenSizeA, Rectangle screenSizeB, Rectangle bgMusic, Rectangle soundRec)
 {
     
     const int xPos = GetScreenWidth() / 15;
@@ -202,13 +210,15 @@ void DrawOptions(Rectangle backBackRec, Rectangle screenSizeA, Rectangle screenS
     DrawBackground();
     
     const string optionsTitle = "OPTIONS";
-    const string optionsChangeSize = "Cambiar resolucion de pantalla";
+    const string optionsChangeSize = "Change screen resolution";
     const string optionsSizeA = "1280x920";
     const string optionsSizeB = "Fullscreen";
-    const string p2Active = "Sonidos";
-    const string backgroundMusic = "Musica de Fondo";
+    const string p2Active = "Sounds";
+    const string backgroundMusic = "Background Music";
     string isMusicActive = music ? "[a]" : "[ ]";
-    const string rulesBack = "Back";
+    const string soundString = "Sound";
+    string isSoundActive = sound ? "[a]" : "[ ]";
+    const string back = "Back";
 
     if(CheckCollisionPointRec(GetMousePosition(), backBackRec))
     {
@@ -222,12 +232,14 @@ void DrawOptions(Rectangle backBackRec, Rectangle screenSizeA, Rectangle screenS
     {
         DrawRectangleRec(screenSizeB, DIFDARKGRAY);
     }
-    if(CheckCollisionPointRec(GetMousePosition(), backgroundMuic))
+    if(CheckCollisionPointRec(GetMousePosition(), bgMusic))
     {
-        DrawRectangleRec(backgroundMuic, DIFDARKGRAY);
+        DrawRectangleRec(bgMusic, DIFDARKGRAY);
     }
-    //DrawRectangleRec(twoPlayers, CheckCollisionPointRec(GetMousePosition(), twoPlayers) ? DIFDARKGRAY : BLACK);
-
+    if (CheckCollisionPointRec(GetMousePosition(), soundRec))
+    {
+        DrawRectangleRec(soundRec, DIFDARKGRAY);
+    }
     DrawText(optionsTitle.c_str(), xPos, GetScreenHeight() / 9, static_cast<int>(static_cast<float>(fontSize) * 2.3f),
              WHITE);
     DrawText(optionsChangeSize.c_str(), xPos, GetScreenHeight() / 5, fontSize1, WHITE);
@@ -235,9 +247,13 @@ void DrawOptions(Rectangle backBackRec, Rectangle screenSizeA, Rectangle screenS
     DrawText(optionsSizeB.c_str(), xPos * 4, static_cast<int>(height / 3.5f), fontSize1, NEONCYAN);
     DrawText(p2Active.c_str(), xPos, static_cast<int>(height / 2.6f), fontSize * 2, WHITE);
     DrawText(backgroundMusic.c_str(), xPos, static_cast<int>(height / 2.2f), fontSize1, NEONCYAN);
+    DrawText(soundString.c_str(), xPos, static_cast<int>(height / 1.9f), fontSize1, NEONCYAN);
     DrawText(isMusicActive.c_str(), static_cast<int>(static_cast<float>(MeasureText(backgroundMusic.c_str(),fontSize1)) * 1.3f), static_cast<int>(height / 2.2f),
              fontSize1, NEONCYAN);
-    DrawText(rulesBack.c_str(), xPos, static_cast<int>(height / 1.8f), fontSize * 2, WHITE);
+    DrawText(isSoundActive.c_str(), static_cast<int>(static_cast<float>(MeasureText(backgroundMusic.c_str(),fontSize1)) * 1.3f), static_cast<int>(height / 1.9f),
+             fontSize1, NEONCYAN);
+    
+    DrawText(back.c_str(), xPos, static_cast<int>(height / 1.5f), fontSize * 2, WHITE);
     
     EndDrawing();
 }
@@ -291,13 +307,19 @@ void DrawRules(Rectangle backRulesRec)
     
     EndDrawing();
 }
+static Rectangle linkedinRec;
+static Rectangle itchioRec;
 
 void CreditsMenu()
 {
-    const Rectangle backCreditsRec = {
-        static_cast<float>(GetScreenWidth()) / 16.0f, static_cast<float>(GetScreenHeight()) / 2.0f, width1 * 2.5f,
-        width1
-    };
+    const int xPos = GetScreenWidth() / 15;
+    const int fontSize = GetScreenHeight() / 30;
+    const float linkedinSize = static_cast<float>(MeasureText("Linkedin", static_cast<int>(fontSize * 1.5f)));
+    const float creditSize = static_cast<float>(MeasureText("SantiagoBarra", static_cast<int>(fontSize * 4.07f)));
+    const Rectangle backCreditsRec = {static_cast<float>(GetScreenWidth()) / 16.0f, static_cast<float>(GetScreenHeight()) / 2.0f, width1 * 2.5f,
+        width1};
+    linkedinRec = { xPos + creditSize/1.01f,GetScreenHeight() / 4.4f,linkedinSize*1.1f, fontSize * 1.4f };
+    itchioRec = { xPos + creditSize/1.01f,GetScreenHeight() / 3.7f,linkedinSize*1.1f, fontSize * 1.4f };
 
     DrawCredits(backCreditsRec);
 
@@ -307,34 +329,55 @@ void CreditsMenu()
         {
             menuOptions = MenuOptions::menu;
         }
+        else if(CheckCollisionPointRec(GetMousePosition(), linkedinRec))
+        {
+            OpenURL("https://www.linkedin.com/in/santiago-barra-13a849236/");
+        }
+        else if(CheckCollisionPointRec(GetMousePosition(), itchioRec))
+        {
+            OpenURL("https://santiagobarra.itch.io/");
+        }
     }
 }
 
 void DrawCredits(Rectangle backCreditsRec)
 {
     const int xPos = GetScreenWidth() / 15;
+
     const int yPos1 = static_cast<int>(static_cast<float>(GetScreenHeight()) / 2.7f);
     const int fontSize = GetScreenHeight() / 30;
     const int fontSize1 = static_cast<int>(static_cast<float>(fontSize) * 1.5f);
     
     BeginDrawing();
-    
     ClearBackground(BLACK);
     DrawBackground();
     
+
     const string creditsTitle = "MADE BY";
     const string creditsCredit = "SantiagoBarra";
+    const string creditsLinkedin = "Linkedin";
+    const string creditsItchio = "Itchio";
     const string creditsColor = "Main Color:";
     const string creditsColorCode = " Neon Cyan {4, 217, 255}";
     const string rulesBack = "Back";
 
     if(CheckCollisionPointRec(GetMousePosition(), backCreditsRec))
     {
-    DrawRectangleRec(backCreditsRec, DIFDARKGRAY);
+        DrawRectangleRec(backCreditsRec, DIFDARKGRAY);
     }
-
+    if(CheckCollisionPointRec(GetMousePosition(), linkedinRec))
+    {
+        DrawRectangleRec(linkedinRec, DIFDARKGRAY);
+    }
+    else if(CheckCollisionPointRec(GetMousePosition(), itchioRec))
+    {
+        DrawRectangleRec(itchioRec, DIFDARKGRAY);
+    }
+    
     DrawText(creditsTitle.c_str(), xPos, GetScreenHeight() / 9, fontSize * 2, WHITE);
     DrawText(creditsCredit.c_str(), xPos, GetScreenHeight() / 5, fontSize * 4, NEONCYAN);
+    DrawText(creditsLinkedin.c_str(), xPos + MeasureText(creditsCredit.c_str(), static_cast<int>(fontSize * 4.07f)), static_cast<int>(GetScreenHeight() / 4.4), static_cast<int>(fontSize*1.5), WHITE);
+    DrawText(creditsItchio.c_str(), xPos + MeasureText(creditsCredit.c_str(), static_cast<int>(fontSize * 4.07f)), static_cast<int>(GetScreenHeight() / 3.7), static_cast<int>(fontSize*1.5), WHITE);
     DrawText(creditsColor.c_str(), xPos, yPos1, fontSize1, WHITE);
     DrawText(creditsColorCode.c_str(), xPos * 4, yPos1, fontSize1, NEONCYAN);
     DrawText(rulesBack.c_str(), xPos, GetScreenHeight() / 2, fontSize * 2, WHITE);
