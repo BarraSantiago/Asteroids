@@ -30,6 +30,7 @@ void LoadResources();
 void UnloadResources();
 void LoseScreen();
 void DrawScore();
+void WinScreen();
 #pragma endregion
 
 #pragma region globalVariables
@@ -53,8 +54,8 @@ static float specialTimer = 5.0f;
 extern bool music;
 extern bool sound;
 extern bool debugMode;
-static bool isPowerUp1;
-static bool win;
+static bool isPowerUp1 = false;
+static bool win = false;
 
 extern MenuOptions menuOptions;
 
@@ -71,10 +72,11 @@ void RunGame()
     Bullet bullets[50];
     damagedTimer = 0;
     vector<Asteroid> asteroids;
-
+    win = false;
+    isPowerUp1 = false;
     Spaceship player = InitSpaceship();
     Vector2 mousePos = GetMousePosition();
-    SpawnBigAsteroids(asteroids, 10, player.body);
+    SpawnBigAsteroids(asteroids, 1, player.body);
 #pragma endregion
 
     while (!WindowShouldClose() && player.isAlive && !win)
@@ -89,6 +91,13 @@ void RunGame()
         while (!WindowShouldClose())
         {
             LoseScreen();
+        }
+    }
+    else if(win)
+    {
+        while (!WindowShouldClose())
+        {
+            WinScreen();
         }
     }
 
@@ -108,7 +117,17 @@ void LoseScreen()
              GetScreenHeight() / 3, GetScreenWidth() / 24, BLUE);
     EndDrawing();
 }
-
+void WinScreen()
+{
+    constexpr Color AltBlue = { 0, 121, 241, 80 }     ;
+    BeginDrawing();
+    DrawBackground();
+    DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), AltBlue);
+    DrawText("You Won!\nPress Esc to return to menu",
+             GetScreenWidth() / 2 - MeasureText("Press Esc to return to menu", GetScreenWidth() / 24) / 2,
+             GetScreenHeight() / 3, GetScreenWidth() / 24, RED);
+    EndDrawing();
+}
 void LoadResources()
 {
     asteroidsTexture = LoadTexture("res/asteroids_asteroids.png");

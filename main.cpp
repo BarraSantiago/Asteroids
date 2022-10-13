@@ -2,7 +2,6 @@
 
 int main() 
 {
-	//RunGame();
 	Menu();
 	return 0;
 }
