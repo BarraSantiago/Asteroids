@@ -22,12 +22,14 @@ void CheckBulletAsteroidCollision(vector<Asteroid>& asteroids, Bullet bullets[])
 void CheckAsteroidPlayerCollision(vector<Asteroid> asteroids, Spaceship& spaceship);
 void CheckPowerUpPlayerCollision(Spaceship spaceship);
 void Update(vector<Asteroid>& asteroids, Bullet bullets[], Spaceship& spaceship);
+void CheckWin(vector<Asteroid> asteroids);
 void CheckCollisions(vector<Asteroid>& asteroids, Bullet bullets[], Spaceship& spaceship);
 bool CircleCircleCollision(Circle c1, Circle c2);
 void SpawnBigAsteroids(std::vector<Asteroid>& asteroids, int quantity, Circle spaceship);
 void LoadResources();
 void UnloadResources();
 void LoseScreen();
+void DrawScore();
 #pragma endregion
 
 #pragma region globalVariables
@@ -52,6 +54,7 @@ extern bool music;
 extern bool sound;
 extern bool debugMode;
 static bool isPowerUp1;
+static bool win;
 
 extern MenuOptions menuOptions;
 
@@ -74,7 +77,7 @@ void RunGame()
     SpawnBigAsteroids(asteroids, 10, player.body);
 #pragma endregion
 
-    while (!WindowShouldClose() && player.isAlive)
+    while (!WindowShouldClose() && player.isAlive && !win)
     {
         mousePos = GetMousePosition();
         CheckCollisions(asteroids, bullets, player);
@@ -166,6 +169,7 @@ void DrawGame(vector<Asteroid> asteroids, Bullet bullets[], Spaceship spaceship,
     DrawShield(spaceship);
     DrawAsteroids(asteroids, asteroidsTexture, specialAsteroidsTexture);
     DrawLives(spaceshipTexture, spaceship.lives);
+    DrawScore();
     EndDrawing();
 }
 
@@ -188,16 +192,34 @@ void DrawShield(Spaceship spaceship)
     }
 }
 
+void DrawScore()
+{
+    DrawText(TextFormat("Score: %i", score), GetScreenWidth()/4, 0, GetScreenWidth()/30, RAYWHITE);
+}
+
 void Update(vector<Asteroid>& asteroids, Bullet bullets[], Spaceship& spaceship)
 {
     PowerUp();
     UpdateAsteroids(asteroids, spaceship);
     UpdateBullets(bullets);
     UpdateSpaceship(bullets, spaceship);
+    CheckWin(asteroids);
     if (music)
     {
         UpdateMusicStream(backgrounMusic);
     }
+}
+
+void CheckWin(vector<Asteroid> asteroids)
+{
+    for (int i = 0; i < static_cast<int>(asteroids.size()); ++i)
+    {
+        if (asteroids[i].isActive)
+        {
+            return;
+        }
+    }
+    win = true;
 }
 
 void UpdateBullets(Bullet bullets[])
@@ -248,8 +270,11 @@ void UpdateAsteroids(vector<Asteroid>& asteroids, Spaceship spaceship)
     }
     if (specialTimer <= 0)
     {
+        float x = static_cast<float>(GetRandomValue(0, GetScreenWidth()));
+        float y = static_cast<float>(GetRandomValue(0, 1));
+        y = y==0 ? 0 : static_cast<float>(GetScreenHeight());
         asteroids.push_back({
-            {0, 0, static_cast<float>(GetScreenWidth()) / 20.0f}, AsteroidSize::SpecialL, {0, 0}, 130, true
+            {x, y, static_cast<float>(GetScreenWidth()) / 20.0f}, AsteroidSize::SpecialL, {0, 0}, 130, true
         });
         specialTimer = 8.0f;
     }
