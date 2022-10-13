@@ -76,7 +76,7 @@ void RunGame()
     isPowerUp1 = false;
     Spaceship player = InitSpaceship();
     Vector2 mousePos = GetMousePosition();
-    SpawnBigAsteroids(asteroids, 1, player.body);
+    SpawnBigAsteroids(asteroids, 10, player.body);
 #pragma endregion
 
     while (!WindowShouldClose() && player.isAlive && !win)
