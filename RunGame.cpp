@@ -45,7 +45,7 @@ void RunGame()
     SetMasterVolume(0.07f);
 
     LoadResources();
-    
+
     Bullet bullets[9];
 
     vector<Asteroid> asteroids;
@@ -82,18 +82,17 @@ void LoadResources()
     asteroidsTexture = LoadTexture("res/asteroids_asteroids.png");
     spaceshipTexture = LoadTexture("res/asteroids_spaceship.png");
     bulletTexture = LoadTexture("res/spaceship_bullet.png");
-    
+
     if (sound)
     {
         shooting = LoadSound("res/spaceship_shoot.wav");
         hit = LoadSound("res/spaceship_hit.wav");
     }
-    if(music)
+    if (music)
     {
         backgrounMusic = LoadMusicStream("res/backgroundMusic.wav");
         PlayMusicStream(backgrounMusic);
     }
-
 }
 
 
@@ -113,13 +112,18 @@ void SpawnBigAsteroids(std::vector<Asteroid>& asteroids, int quantity, Circle sp
     }
 }
 
+extern bool debugMode;
+
 void DrawGame(vector<Asteroid> asteroids, Bullet bullets[], Spaceship spaceship, Vector2 mousePos)
 {
     BeginDrawing();
     ClearBackground(BLACK);
     DrawBackground();
-    DrawLine(static_cast<int>(mousePos.x), static_cast<int>(mousePos.y), static_cast<int>(spaceship.body.x),
-             static_cast<int>(spaceship.body.y), WHITE);
+    if (debugMode)
+    {
+        DrawLine(static_cast<int>(mousePos.x), static_cast<int>(mousePos.y), static_cast<int>(spaceship.body.x),
+                 static_cast<int>(spaceship.body.y), WHITE);
+    }
     DrawBullets(bullets);
     DrawSpaceship(spaceship.body, spaceship.rotation, spaceshipTexture);
     DrawAsteroids(asteroids, asteroidsTexture);
@@ -177,7 +181,7 @@ void UpdateSpaceship(Bullet bullets[], Spaceship& spaceship)
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
     {
         Shoot(spaceship.body, mousePos, bullets);
-        if(sound)
+        if (sound)
         {
             PlaySound(shooting);
         }
@@ -218,7 +222,7 @@ void CheckAsteroidPlayerCollision(vector<Asteroid> asteroids, Spaceship& spacesh
             {
                 if (CircleCircleCollision(spaceship.body, asteroids[i].body))
                 {
-                    if(sound)
+                    if (sound)
                     {
                         PlaySound(hit);
                     }

@@ -74,7 +74,11 @@ void DrawSpaceship(Circle body, float rotation, Texture2D spaceshipTexture)
     const Vector2 origin = {body.radius , body.radius};
     
     DrawTexturePro(spaceshipTexture, sourceRec, {body.x, body.y, body.radius*2, body.radius*2}, origin, rotation+90, NEONCYAN);
-    DrawCircleLines(static_cast<int>(body.x), static_cast<int>(body.y), body.radius, NEONCYAN);
+    extern bool debugMode;
+    if(debugMode)
+    {
+        DrawCircleLines(static_cast<int>(body.x), static_cast<int>(body.y), body.radius, NEONCYAN);
+    }
 }
 
 Spaceship InitSpaceship()

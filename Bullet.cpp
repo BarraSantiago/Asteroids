@@ -40,7 +40,7 @@ void DrawBullets(Bullet bullets[])
         }
     }
 }
-
+extern bool debugMode;
 void DrawBullet(Bullet bullet)
 {
     const float frameWidth = static_cast<float>(bulletTexture.width);
@@ -49,5 +49,8 @@ void DrawBullet(Bullet bullet)
     const Vector2 origin = {bullet.body.radius , bullet.body.radius};
     
     DrawTexturePro(bulletTexture, sourceRec, {bullet.body.x, bullet.body.y, bullet.body.radius*2, bullet.body.radius*2}, origin, 0, RAYWHITE);
-    DrawCircleLines(static_cast<int>(bullet.body.x), static_cast<int>(bullet.body.y),bullet.body.radius, RED);
+    if(debugMode)
+    {
+        DrawCircleLines(static_cast<int>(bullet.body.x), static_cast<int>(bullet.body.y),bullet.body.radius, RED);
+    }
 }
