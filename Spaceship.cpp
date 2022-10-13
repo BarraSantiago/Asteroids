@@ -64,6 +64,18 @@ float RepositionSpaceship(Circle body)
     return angle;
 }
 
+void DrawLives( Texture2D spaceshipTexture, int lives)
+{
+    const int frameWidth = spaceshipTexture.width;
+    const int frameHeight = spaceshipTexture.height;
+    const Rectangle sourceRec = { 0.0f, 0.0f, static_cast<float>(frameWidth), static_cast<float>(frameHeight) };
+    constexpr Color NEONCYAN = CLITERAL(Color){4, 217, 255, 255};
+    const Vector2 origin = {0,0};
+    for (int i = 0; i < lives; ++i)
+    {
+    DrawTexturePro(spaceshipTexture, sourceRec, {10 + static_cast<float>(frameWidth)/8*i,0, frameWidth/7.0f, frameHeight/7.0f}, origin, 0, NEONCYAN);
+    }
+}
 
 void DrawSpaceship(Circle body, float rotation, Texture2D spaceshipTexture)
 {

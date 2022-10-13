@@ -127,6 +127,7 @@ void DrawGame(vector<Asteroid> asteroids, Bullet bullets[], Spaceship spaceship,
     DrawBullets(bullets);
     DrawSpaceship(spaceship.body, spaceship.rotation, spaceshipTexture);
     DrawAsteroids(asteroids, asteroidsTexture);
+    DrawLives(spaceshipTexture, spaceship.lives);
     EndDrawing();
 }
 
