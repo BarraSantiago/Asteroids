@@ -23,7 +23,7 @@ static float height;
 static float width1;
 bool music = true;
 bool sound = true;
-bool debugMode = true;
+bool debugMode = false;
 Texture2D backgroundTexture;
 MenuOptions menuOptions = MenuOptions::menu;
 static constexpr Color NEONCYAN = CLITERAL(Color){4, 217, 255, 255};

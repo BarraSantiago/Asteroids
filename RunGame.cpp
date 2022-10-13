@@ -4,14 +4,15 @@
 #include "Asteroid.h"
 #include "Bullet.h"
 #include "menu.h"
-#include "raylib.h"
 #include "Spaceship.h"
+#include "raylib.h"
+#include "raymath.h"
 
 using namespace std;
 
 #pragma region functions
 void UpdateBullets(Bullet bullets[]);
-void UpdateAsteroids(vector<Asteroid>& asteroids);
+void UpdateAsteroids(vector<Asteroid>& asteroids, Spaceship spaceship);
 void UpdateSpaceship(Bullet bullets[], Spaceship& spaceship);
 void DrawGame(vector<Asteroid> asteroids, Bullet bullets[], Spaceship spaceship, Vector2 mousePos);
 void CheckBulletAsteroidCollision(vector<Asteroid>& asteroids, Bullet bullets[]);
@@ -21,21 +22,27 @@ void CheckCollisions(vector<Asteroid>& asteroids, Bullet bullets[], Spaceship& s
 bool CircleCircleCollision(Circle c1, Circle c2);
 void SpawnBigAsteroids(std::vector<Asteroid>& asteroids, int quantity, Circle spaceship);
 void LoadResources();
+void UnloadResources();
 #pragma endregion
 
 #pragma region globalVariables
 extern Texture2D backgroundTexture;
 static Texture2D spaceshipTexture;
 static Texture2D asteroidsTexture;
+static Texture2D specialAsteroidsTexture;
 Texture2D bulletTexture;
 static Sound shooting;
 static Sound hit;
 static Music backgrounMusic;
+
+static int score;
 static float damagedTimer;
+static float specialTimer = 5.0f;
 
 extern bool music;
 extern bool sound;
 extern MenuOptions menuOptions;
+
 #pragma endregion
 
 void RunGame()
@@ -46,17 +53,16 @@ void RunGame()
 
     LoadResources();
 
-    Bullet bullets[9];
+    Bullet bullets[50];
 
     vector<Asteroid> asteroids;
 
     Spaceship player = InitSpaceship();
 
     SpawnBigAsteroids(asteroids, 10, player.body);
-
 #pragma endregion
 
-    while (!WindowShouldClose()) // && player.isAlive)
+    while (!WindowShouldClose() && player.isAlive)
     {
         Vector2 mousePos = GetMousePosition();
         CheckCollisions(asteroids, bullets, player);
@@ -68,11 +74,7 @@ void RunGame()
         //DEAD SCREEN
     }
 
-    UnloadTexture(spaceshipTexture);
-    UnloadTexture(bulletTexture);
-    UnloadTexture(asteroidsTexture);
-    UnloadSound(shooting);
-    UnloadSound(hit);
+    UnloadResources();
     CloseAudioDevice();
     menuOptions = MenuOptions::menu;
 }
@@ -80,6 +82,7 @@ void RunGame()
 void LoadResources()
 {
     asteroidsTexture = LoadTexture("res/asteroids_asteroids.png");
+    specialAsteroidsTexture = LoadTexture("res/asteroids_special.png");
     spaceshipTexture = LoadTexture("res/asteroids_spaceship.png");
     bulletTexture = LoadTexture("res/spaceship_bullet.png");
 
@@ -95,6 +98,15 @@ void LoadResources()
     }
 }
 
+void UnloadResources()
+{
+    UnloadTexture(spaceshipTexture);
+    UnloadTexture(bulletTexture);
+    UnloadTexture(asteroidsTexture);
+    UnloadTexture(specialAsteroidsTexture);
+    UnloadSound(shooting);
+    UnloadSound(hit);
+}
 
 void SpawnBigAsteroids(std::vector<Asteroid>& asteroids, int quantity, Circle spaceship)
 {
@@ -126,7 +138,7 @@ void DrawGame(vector<Asteroid> asteroids, Bullet bullets[], Spaceship spaceship,
     }
     DrawBullets(bullets);
     DrawSpaceship(spaceship.body, spaceship.rotation, spaceshipTexture);
-    DrawAsteroids(asteroids, asteroidsTexture);
+    DrawAsteroids(asteroids, asteroidsTexture, specialAsteroidsTexture);
     DrawLives(spaceshipTexture, spaceship.lives);
     EndDrawing();
 }
@@ -134,7 +146,7 @@ void DrawGame(vector<Asteroid> asteroids, Bullet bullets[], Spaceship spaceship,
 
 void Update(vector<Asteroid>& asteroids, Bullet bullets[], Spaceship& spaceship)
 {
-    UpdateAsteroids(asteroids);
+    UpdateAsteroids(asteroids, spaceship);
     UpdateBullets(bullets);
     UpdateSpaceship(bullets, spaceship);
     if (music)
@@ -157,12 +169,15 @@ void UpdateBullets(Bullet bullets[])
     }
 }
 
-void UpdateAsteroids(vector<Asteroid>& asteroids)
+void UpdateAsteroids(vector<Asteroid>& asteroids, Spaceship spaceship)
 {
+    specialTimer -= GetFrameTime();
     for (int i = 0; i < static_cast<int>(asteroids.size()); ++i)
     {
         if (asteroids[i].isActive)
         {
+            if (asteroids[i].size<AsteroidSize::SpecialS)
+            {
             Vector2 velocity = {
                 GetFrameTime() * asteroids[i].direction.x * asteroids[i].speed,
                 GetFrameTime() * asteroids[i].direction.y * asteroids[i].speed
@@ -170,7 +185,24 @@ void UpdateAsteroids(vector<Asteroid>& asteroids)
             asteroids[i].body.x += velocity.x;
             asteroids[i].body.y += velocity.y;
             WarpAsteroid(asteroids[i]);
+            }
+            else
+            {
+                asteroids[i].direction = {spaceship.body.x-asteroids[i].body.x, spaceship.body.y-asteroids[i].body.y};
+                asteroids[i].direction = Vector2Normalize(asteroids[i].direction);
+                Vector2 velocity = {
+                    GetFrameTime() * asteroids[i].direction.x * asteroids[i].speed,
+                    GetFrameTime() * asteroids[i].direction.y * asteroids[i].speed
+                };
+                asteroids[i].body.x += velocity.x;
+                asteroids[i].body.y += velocity.y;
+            }
         }
+    }
+    if (specialTimer <= 0)
+    {
+        asteroids.push_back({{0,0, GetScreenWidth()/20.0f},AsteroidSize::SpecialL, {0,0},130, true});
+        specialTimer = 8.0f;
     }
 }
 
@@ -205,6 +237,7 @@ void CheckBulletAsteroidCollision(vector<Asteroid>& asteroids, Bullet bullets[])
             {
                 if (CircleCircleCollision(bullets[j].body, asteroids[i].body))
                 {
+                    score += static_cast<int>(asteroids[i].size);
                     bullets[j].isActive = false;
                     SpawnAsteroid(asteroids, i);
                 }
