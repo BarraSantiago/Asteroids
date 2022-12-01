@@ -103,8 +103,15 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)/lib/raylib/lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>winmm.lib;raylib.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <EntryPointSymbol></EntryPointSymbol>
+      <EntryPointSymbol>
+      </EntryPointSymbol>
     </Link>
+    <PostBuildEvent>
+      <Command>IF exist "$(SolutionDir)bin\$(Configuration)\res" rd "$(SolutionDir)bin\$(Platform)\$(Configuration)\res" 
+MKDIR  "$(SolutionDir)bin\$(Configuration)\res" 
+XCOPY "$(SolutionDir)res" "$(SolutionDir)bin\$(Configuration)\res"/e /h /y
+</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -137,6 +144,16 @@
       <AdditionalDependencies>winmm.lib;raylib.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
     </Link>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>IF exist "$(SolutionDir)bin\$(Configuration)\res" rd "$(SolutionDir)bin\$(Platform)\$(Configuration)\res" 
+MKDIR  "$(SolutionDir)bin\$(Configuration)\res" 
+XCOPY "$(SolutionDir)res" "$(SolutionDir)bin\$(Configuration)\res"/e /h /y
+</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>

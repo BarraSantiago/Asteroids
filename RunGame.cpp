@@ -78,7 +78,6 @@ void RunGame()
     Vector2 mousePos = GetMousePosition();
     SpawnBigAsteroids(asteroids, 10, player.body);
 #pragma endregion
-
     while (!WindowShouldClose() && player.isAlive && !win)
     {
         mousePos = GetMousePosition();
