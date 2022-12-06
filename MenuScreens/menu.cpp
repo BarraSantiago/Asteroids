@@ -1,13 +1,15 @@
 ﻿#include "menu.h"
 #include <iostream>
-#include "RunGame.h"
+
+#include "MainMenu.h"
+#include "MenuEnums.h"
+#include "../RunGame.h"
 #include "raylib.h"
 
 using namespace std;
 
 #pragma region functions
-void MainMenu();
-void DrawMainMenu(MenuUI menuUI, Rectangle menuRectangles[]);
+
 void OptionsMenu(int& screenWidth, int& screenHeight);
 void DrawOptions(Rectangle backBackRec, Rectangle screenSizeA, Rectangle screenSizeB, Rectangle bgMusic,
                  Rectangle soundRec);
@@ -74,91 +76,13 @@ void Menu()
     UnloadTexture(backgroundTexture);
 }
 
-MenuUI InitMenuUI()
-{
-    const int fontSize = GetScreenHeight() / 9;
-    const float xPosition = static_cast<float>(GetScreenWidth()) / 25.0f;
-    const float yPosition = static_cast<float>(GetScreenHeight()) / 9.0f;
-    const float xRepos = xPosition - xPosition / 5;
-    const float yRepos = yPosition / 20;
-    return {fontSize, xPosition, yPosition, xRepos, yRepos};
-}
 
-void MainMenu()
-{
-    Rectangle menuRectangles[6];
 
-    MenuUI menuUI = InitMenuUI();
 
-    for (int i = static_cast<int>(MenuOptions::exit); i != static_cast<int>(MenuOptions::menu); --i)
-    {
-        menuRectangles[i] = {
-            menuUI.xRepos,
-            static_cast<float>(GetScreenHeight()) - menuUI.yPosition * (static_cast<int>(MenuOptions::exit) -
-                static_cast<float>(i) + 1.45f) + menuUI.yRepos,
-            static_cast<float>(menuUI.fontSize) * 3.9f, static_cast<float>(menuUI.fontSize)
-        };
-    }
 
-    Vector2 mousePos = GetMousePosition();
-
-    DrawMainMenu(menuUI, menuRectangles);
-
-    if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON))
-    {
-        if (CheckCollisionPointRec(mousePos, menuRectangles[static_cast<int>(MenuOptions::play)]))
-        {
-            menuOptions = MenuOptions::play;
-        }
-        else if (CheckCollisionPointRec(mousePos, menuRectangles[static_cast<int>(MenuOptions::options)]))
-        {
-            menuOptions = MenuOptions::options;
-        }
-        else if (CheckCollisionPointRec(mousePos, menuRectangles[static_cast<int>(MenuOptions::rules)]))
-        {
-            menuOptions = MenuOptions::rules;
-        }
-        else if (CheckCollisionPointRec(mousePos, menuRectangles[static_cast<int>(MenuOptions::credits)]))
-        {
-            menuOptions = MenuOptions::credits;
-        }
-        else if (CheckCollisionPointRec(mousePos, menuRectangles[static_cast<int>(MenuOptions::exit)]))
-        {
-            menuOptions = MenuOptions::exit;
-        }
-    }
-}
-
-void DrawMainMenu(MenuUI menuUI, Rectangle menuRectangles[])
-{
-    BeginDrawing();
-    ClearBackground(BLACK);
-    DrawBackground();
-
-    for (int i = static_cast<int>(MenuOptions::exit); i != static_cast<int>(MenuOptions::menu); --i)
-    {
-        if (CheckCollisionPointRec(GetMousePosition(), menuRectangles[i]))
-        {
-            DrawRectangleRec(menuRectangles[i], DIFDARKGRAY);
-        }
-    }
-
-    DrawText("Asteroids", GetScreenWidth() / 2 - MeasureText("Asteroids", GetScreenHeight() / 7) / 2,
-             GetScreenHeight() / 25, GetScreenHeight() / 7, WHITE);
-
-    string options[] = {"menu", "Play", "Options", "Rules", "Credits", "Exit"};
-
-    for (int i = static_cast<int>(MenuOptions::exit); i != static_cast<int>(MenuOptions::menu); --i)
-    {
-        DrawText(options[i].c_str(), static_cast<int>(menuUI.xPosition),
-                 static_cast<int>(static_cast<float>(GetScreenHeight()) - menuUI.yPosition * (6.4f - static_cast<float>(
-                     i))),menuUI.fontSize, NEONCYAN);
-    }
-
-    EndDrawing();
-}
 
 static Rectangle debugRec;
+
 void OptionsMenu(int& screenWidth, int& screenHeight)
 {
     const float xPos = static_cast<float>(GetScreenWidth()) / 16.0f;
@@ -198,7 +122,7 @@ void OptionsMenu(int& screenWidth, int& screenHeight)
         {
             sound = !sound;
         }
-        else if(CheckCollisionPointRec(GetMousePosition(), debugRec))
+        else if (CheckCollisionPointRec(GetMousePosition(), debugRec))
         {
             debugMode = !debugMode;
         }
@@ -255,7 +179,7 @@ void DrawOptions(Rectangle backBackRec, Rectangle screenSizeA, Rectangle screenS
     {
         DrawRectangleRec(debugRec, DIFDARKGRAY);
     }
-    
+
     DrawText(optionsTitle.c_str(), xPos, GetScreenHeight() / 9, static_cast<int>(static_cast<float>(fontSize) * 2.3f),
              WHITE);
     DrawText(optionsChangeSize.c_str(), xPos, GetScreenHeight() / 5, fontSize1, WHITE);
@@ -273,8 +197,8 @@ void DrawOptions(Rectangle backBackRec, Rectangle screenSizeA, Rectangle screenS
     DrawText(extra.c_str(), xPos, static_cast<int>(height / 1.4f), fontSize * 2, WHITE);
     DrawText(debugString.c_str(), xPos, static_cast<int>(height / 1.29f), fontSize1, NEONCYAN);
     DrawText(isDebugActive.c_str(),
-                 static_cast<int>(static_cast<float>(MeasureText(debugString.c_str(), fontSize1)) * 1.4f),
-                 static_cast<int>(height / 1.29f), fontSize1, NEONCYAN);
+             static_cast<int>(static_cast<float>(MeasureText(debugString.c_str(), fontSize1)) * 1.4f),
+             static_cast<int>(height / 1.29f), fontSize1, NEONCYAN);
     DrawText(back.c_str(), xPos, static_cast<int>(height / 1.1f), fontSize * 2, WHITE);
 
     EndDrawing();
@@ -310,7 +234,8 @@ void DrawRules(Rectangle backRulesRec)
 
     const string rulesTitle = "Rules";
     const string rulesMove = "Player:\n-Movement: Press the right mouse button to start moving";
-    const string rulesAttack = "-Attack: Press the left mouse button to shoot\n-Esc: While in game, pess Esc to return to menu";
+    const string rulesAttack =
+        "-Attack: Press the left mouse button to shoot\n-Esc: While in game, pess Esc to return to menu";
     const string rulesPowerUpA = "Power Ups:\n-Shield: Grabbing the blue shield gives 4 seconds of damage immunity.";
     const string rulesWinCon = "Win Condition: In order to win, you need to destoy all asteroids.";
     const string rulesBack = "Back";
@@ -323,8 +248,8 @@ void DrawRules(Rectangle backRulesRec)
     DrawText(rulesTitle.c_str(), xPos, GetScreenHeight() / 10, fontSize * 2, WHITE);
     DrawText(rulesMove.c_str(), xPos, GetScreenHeight() / 6, fontSize, NEONCYAN);
     DrawText(rulesAttack.c_str(), xPos, GetScreenHeight() / 4, fontSize, NEONCYAN);
-    DrawText(rulesPowerUpA.c_str(), xPos, static_cast<int>(GetScreenHeight() / 2.7f), fontSize , NEONCYAN);
-    DrawText(rulesWinCon.c_str(), xPos, GetScreenHeight() / 2, fontSize , NEONCYAN);
+    DrawText(rulesPowerUpA.c_str(), xPos, static_cast<int>(GetScreenHeight() / 2.7f), fontSize, NEONCYAN);
+    DrawText(rulesWinCon.c_str(), xPos, GetScreenHeight() / 2, fontSize, NEONCYAN);
     DrawText(rulesBack.c_str(), xPos, static_cast<int>(GetScreenHeight() / 1.7f), fontSize * 2, WHITE);
 
     EndDrawing();
@@ -333,6 +258,7 @@ void DrawRules(Rectangle backRulesRec)
 static Rectangle linkedinRec;
 static Rectangle itchioRec;
 static Rectangle creditsRec[6];
+
 void CreditsMenu()
 {
     const int xPos = GetScreenWidth() / 15;
@@ -348,13 +274,15 @@ void CreditsMenu()
     };
     linkedinRec = {xPos + creditSize / 1.01f, GetScreenHeight() / 4.4f, linkedinSize * 1.1f, fontSize * 1.4f};
     itchioRec = {xPos + creditSize / 1.01f, GetScreenHeight() / 3.7f, linkedinSize * 1.1f, fontSize * 1.4f};
-    
+
     for (int i = 0; i < 6; ++i)
     {
         float y = static_cast<float>(yPos1) * (1.0f + 0.15f * static_cast<float>(i));
         creditsRec[i] = {
-            static_cast<float>(xPos), y, static_cast<float>(MeasureText(credits[4].c_str(), static_cast<int>(fontSize*1.5f))),
-            static_cast<float>(fontSize) * 1.4f};
+            static_cast<float>(xPos), y,
+            static_cast<float>(MeasureText(credits[4].c_str(), static_cast<int>(fontSize * 1.5f))),
+            static_cast<float>(fontSize) * 1.4f
+        };
     }
 
     DrawCredits(backCreditsRec);
@@ -365,7 +293,7 @@ void CreditsMenu()
     creditsUrl[3] = "https://www.kindpng.com/imgv/wmmowx_pixel-art-asteroid-sprite-hd-png-download/";
     creditsUrl[4] = "https://mixkit.co/free-sound-effects/space-shooter/";
     creditsUrl[5] = "https://freesound.org/people/Clinthammer/sounds/179511/";
-    
+
     if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON))
     {
         if (CheckCollisionPointRec(GetMousePosition(), backCreditsRec))
@@ -411,10 +339,13 @@ void DrawCredits(Rectangle backCreditsRec)
     const string creditsLinkedin = "Linkedin";
     const string creditsItchio = "Itchio";
 
-    credits[0] = "Bullet sprite by Matthew Mcconaughey"; //https://www.vhv.rs/viewpic/iobbxmo_heart-pixel-art-hd-png-download/
+    credits[0] = "Bullet sprite by Matthew Mcconaughey";
+    //https://www.vhv.rs/viewpic/iobbxmo_heart-pixel-art-hd-png-download/
     credits[1] = "Spaceship sprite by MillionthVector"; //http://millionthvector.blogspot.com/p/free-sprites.html
-    credits[2] = "Background art by mentalpoppixels"; //https://www.reddit.com/r/PixelArt/comments/a4fp0e/supermassive_black_hole/
-    credits[3] = "Asteroid sprite by Sarah Reddington"; //https://www.kindpng.com/imgv/wmmowx_pixel-art-asteroid-sprite-hd-png-download/
+    credits[2] = "Background art by mentalpoppixels";
+    //https://www.reddit.com/r/PixelArt/comments/a4fp0e/supermassive_black_hole/
+    credits[3] = "Asteroid sprite by Sarah Reddington";
+    //https://www.kindpng.com/imgv/wmmowx_pixel-art-asteroid-sprite-hd-png-download/
     credits[4] = "Shoot and hit sound effect from mixkit.co"; //https://mixkit.co/free-sound-effects/space-shooter/
     credits[5] = "Backgroun sound by Clinthammer"; //https://freesound.org/people/Clinthammer/sounds/179511/
     const string rulesBack = "Back";

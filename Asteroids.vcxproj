@@ -176,6 +176,7 @@ XCOPY "$(SolutionDir)res" "$(SolutionDir)bin\$(Configuration)\res"/e /h /y
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="DrawAdapted.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MenuScreens\MainMenu.cpp" />
     <ClCompile Include="MenuScreens\menu.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -238,6 +239,7 @@ XCOPY "$(SolutionDir)res" "$(SolutionDir)bin\$(Configuration)\res"/e /h /y
       <AdditionalIncludeDirectories>C:\Users\Administrador\Documents\GitHub\Asteroids\/lib/raylib/include</AdditionalIncludeDirectories>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
+    <ClCompile Include="MenuScreens\MenuEnums.cpp" />
     <ClCompile Include="RunGame.cpp" />
     <ClCompile Include="Spaceship.cpp" />
   </ItemGroup>
@@ -246,7 +248,9 @@ XCOPY "$(SolutionDir)res" "$(SolutionDir)bin\$(Configuration)\res"/e /h /y
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Circle.h" />
     <ClInclude Include="DrawAdapted.h" />
+    <ClInclude Include="MenuScreens\MainMenu.h" />
     <ClInclude Include="MenuScreens\menu.h" />
+    <ClInclude Include="MenuScreens\MenuEnums.h" />
     <ClInclude Include="RunGame.h" />
     <ClInclude Include="Spaceship.h" />
   </ItemGroup>

@@ -6,7 +6,9 @@
 #include "MenuScreens/menu.h"
 #include "Spaceship.h"
 #include "raylib.h"
+#include "MenuScreens/MenuEnums.h"
 
+enum class MenuOptions;
 using namespace std;
 
 #pragma region functions
@@ -247,9 +249,8 @@ void UpdateBullets(Bullet bullets[])
     for (int i = 0; i < 5; ++i)
     {
         if (!bullets[i].isActive) continue;
-        
+
         MoveBullet(bullets[i]);
-        
     }
 }
 
@@ -340,7 +341,7 @@ void CheckAsteroidPlayerCollision(vector<Asteroid> asteroids, Spaceship& spacesh
         {
             PlaySound(hit);
         }
-        
+
         spaceship.lives--;
         damagedTimer = 1.5f;
         if (spaceship.lives <= 0)
