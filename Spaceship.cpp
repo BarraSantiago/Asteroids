@@ -15,18 +15,26 @@ void AcelerationLimitator(float& aceleration)
     }
 }
 
+void PlayerAceleration(Vector2& aceleration, Vector2 mousePos, Vector2 playerPos)
+{
+    constexpr float playerSpeed = 300.f;
+    
+    Vector2 direcVector = {mousePos.x - playerPos.x, mousePos.y - playerPos.y};
+    Vector2 normVector = Vector2Normalize(direcVector);
+    
+    aceleration.x += normVector.x * GetFrameTime() * playerSpeed;
+    aceleration.y += normVector.y * GetFrameTime() * playerSpeed;
+}
+
 void MovePlayer(Spaceship& player, Vector2 mousePos)
 {
-    const float playerSpeed = 300.f;
-    Vector2 direcVector = {mousePos.x - player.body.x, mousePos.y - player.body.y};
-    Vector2 normVector = Vector2Normalize(direcVector);
-
+    Vector2 playerPos{player.body.x, player.body.y};
+    
     if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT))
     {
-        player.aceleration.x += normVector.x * GetFrameTime() * playerSpeed;
-        player.aceleration.y += normVector.y * GetFrameTime() * playerSpeed;
-        
+        PlayerAceleration(player.aceleration, mousePos, playerPos);
     }
+    
     player.body.x += player.aceleration.x * GetFrameTime();
     player.body.y += player.aceleration.y * GetFrameTime();
 
@@ -65,35 +73,45 @@ float RepositionSpaceship(Circle body)
     return angle;
 }
 
+Rectangle TextureToSourceRec(Texture2D texture)
+{
+    int frameWidth = texture.width;
+    int frameHeight = texture.height;
+    return {0.0f, 0.0f, static_cast<float>(frameWidth), static_cast<float>(frameHeight)};
+}
+
+void DrawTextureCyan(Texture2D texture, Rectangle position, Vector2 origin, float rotation)
+{
+    constexpr Color NEONCYAN = CLITERAL(Color){4, 217, 255, 255};
+    Rectangle sourceRec = TextureToSourceRec(texture);
+    DrawTexturePro(texture, sourceRec, position, origin, rotation, NEONCYAN);
+}
+
 void DrawLives(Texture2D spaceshipTexture, int lives)
 {
-    const int frameWidth = spaceshipTexture.width;
-    const int frameHeight = spaceshipTexture.height;
-    const Rectangle sourceRec = {0.0f, 0.0f, static_cast<float>(frameWidth), static_cast<float>(frameHeight)};
-    constexpr Color NEONCYAN = CLITERAL(Color){4, 217, 255, 255};
+    float textureWidth = static_cast<float>(spaceshipTexture.width);
+    float textureHeight = static_cast<float>(spaceshipTexture.height);
     const Vector2 origin = {0, 0};
+
     for (int i = 0; i < lives; ++i)
     {
-        DrawTexturePro(spaceshipTexture, sourceRec, {
-                           10 + static_cast<float>(frameWidth) / 8 * i, 0, frameWidth / 7.0f, frameHeight / 7.0f
-                       }, origin, 0, NEONCYAN);
+        Rectangle position = {
+            10 + textureWidth / 8 * i, 0, textureWidth / 7.0f, textureHeight / 7.0f
+        };
+        DrawTextureCyan(spaceshipTexture, position, origin, 0);
     }
 }
 
 void DrawSpaceship(Circle body, float rotation, Texture2D spaceshipTexture)
 {
-    const int frameWidth = spaceshipTexture.width;
-    const int frameHeight = spaceshipTexture.height;
-    const Rectangle sourceRec = {0.0f, 0.0f, static_cast<float>(frameWidth), static_cast<float>(frameHeight)};
-    constexpr Color NEONCYAN = CLITERAL(Color){4, 217, 255, 255};
     const Vector2 origin = {body.radius, body.radius};
+    Rectangle position = {body.x, body.y, body.radius * 2, body.radius * 2};
+    DrawTextureCyan(spaceshipTexture, position, origin, rotation + 90);
 
-    DrawTexturePro(spaceshipTexture, sourceRec, {body.x, body.y, body.radius * 2, body.radius * 2}, origin,
-                   rotation + 90, NEONCYAN);
     extern bool debugMode;
     if (debugMode)
     {
-        DrawCircleLines(static_cast<int>(body.x), static_cast<int>(body.y), body.radius, NEONCYAN);
+        DrawCircleLines(static_cast<int>(body.x), static_cast<int>(body.y), body.radius, {4, 217, 255, 255});
     }
 }
 
