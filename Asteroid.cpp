@@ -7,55 +7,52 @@ void DrawAsteroid(Asteroid asteroid, Texture2D texture);
 static float rotation = 0;
 extern bool debugMode;
 
-Asteroid InitSpecialAsteroid(Vector2 position, AsteroidSize size)
+float CalculateRadius(AsteroidSize size)
 {
-    float speed = 30.0f;
-    float radius = static_cast<float>(GetScreenWidth()) / 10.0f;
     switch (size)
     {
+    case AsteroidSize::Small:
     case AsteroidSize::SpecialS:
-        speed = 170.0f;
-        radius = static_cast<float>(GetScreenWidth()) / 75.0f;
+        return static_cast<float>(GetScreenWidth()) / 75.0f;
         break;
+    case AsteroidSize::Medium:
     case AsteroidSize::SpecialM:
-        speed = 190.0f;
-        radius = static_cast<float>(GetScreenWidth()) / 40.0f;
+        return static_cast<float>(GetScreenWidth()) / 40.0f;
         break;
+    case AsteroidSize::Large:
     case AsteroidSize::SpecialL:
-        speed = 200.0f;
-        radius = static_cast<float>(GetScreenWidth()) / 20.0f;
+        return static_cast<float>(GetScreenWidth()) / 20.0f;
         break;
-    default: ;
+    default:
+        break;
     }
-
-    Circle body = {position.x, position.y, radius};
-
-    return {body, size, {0, 0}, speed, true};
+    return static_cast<float>(GetScreenWidth()) / 10.0f;
 }
 
 Asteroid InitAsteroid(Vector2 position, AsteroidSize size)
 {
-    float speed = 30.0f;
-    float radius = static_cast<float>(GetScreenWidth()) / 10.0f;
+    float speed;
+    float radius = CalculateRadius(size);
     switch (size)
     {
     case AsteroidSize::Small:
+    case AsteroidSize::SpecialS:
         speed = 150.0f;
-        radius = static_cast<float>(GetScreenWidth()) / 75.0f;
         break;
     case AsteroidSize::Medium:
+    case AsteroidSize::SpecialM:
         speed = 200.0f;
-        radius = static_cast<float>(GetScreenWidth()) / 40.0f;
         break;
     case AsteroidSize::Large:
+    case AsteroidSize::SpecialL:
         speed = 75;
-        radius = static_cast<float>(GetScreenWidth()) / 20.0f;
         break;
     default:
-        radius = static_cast<float>(GetScreenWidth()) / 10.0f;
-        break;
+        speed = 30.0f;
     }
+
     Circle body = {position.x, position.y, radius};
+
     Vector2 direction;
     direction.x = static_cast<float>(GetRandomValue(-70, 70));
     direction.x += static_cast<int>(direction.x) >= 0 ? 10 : -10;
@@ -68,30 +65,36 @@ Asteroid InitAsteroid(Vector2 position, AsteroidSize size)
 
 void DrawAsteroids(std::vector<Asteroid> asteroids, Texture2D texture, Texture2D special)
 {
-    for (int i = 0; i < static_cast<int>(asteroids.size()); ++i)
+    for (Asteroid asteroid : asteroids)
     {
-        if (asteroids[i].isActive)
+        if (asteroid.isActive)
         {
-            DrawAsteroid(asteroids[i], asteroids[i].size < AsteroidSize::SpecialS ? texture : special);
+            DrawAsteroid(asteroid, asteroid.size < AsteroidSize::SpecialS ? texture : special);
         }
     }
 }
 
+Rectangle TextureToSourceRec(Texture2D texture)
+{
+    int frameWidth = texture.width;
+    int frameHeight = texture.height;
+    return {0.0f, 0.0f, static_cast<float>(frameWidth), static_cast<float>(frameHeight)};
+}
+
 void DrawAsteroid(Asteroid asteroid, Texture2D texture)
 {
-    const float frameWidth = static_cast<float>(texture.width);
-    const float frameHeight = static_cast<float>(texture.height);
-    const Rectangle sourceRec = {0, 0, frameWidth, frameHeight};
+    const Rectangle sourceRec = TextureToSourceRec(texture);
     const Rectangle position = {asteroid.body.x, asteroid.body.y, asteroid.body.radius * 2, asteroid.body.radius * 2};
     const Vector2 origin = {asteroid.body.radius, asteroid.body.radius};
 
     DrawTexturePro(texture, sourceRec, position, origin, rotation, RAYWHITE);
+    
     if (debugMode)
     {
         DrawCircleLines(static_cast<int>(asteroid.body.x), static_cast<int>(asteroid.body.y), asteroid.body.radius,
                         WHITE);
     }
-    rotation += 1 * GetFrameTime();
+    rotation += GetFrameTime();
 }
 
 void SpawnAsteroid(std::vector<Asteroid>& asteroids, int vecPosition, AsteroidSize size)
@@ -127,7 +130,7 @@ void SpawnAsteroid(std::vector<Asteroid>& asteroids, int vecPosition, AsteroidSi
 void SpawnAsteroids(std::vector<Asteroid>& asteroids, int vecPosition)
 {
     AsteroidSize size = asteroids[vecPosition].size;
-    
+
     SpawnAsteroid(asteroids, vecPosition, size);
 }
 

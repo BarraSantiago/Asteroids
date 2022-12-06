@@ -89,9 +89,9 @@ void DrawTextureCyan(Texture2D texture, Rectangle position, Vector2 origin, floa
 
 void DrawLives(Texture2D spaceshipTexture, int lives)
 {
-    float textureWidth = static_cast<float>(spaceshipTexture.width);
-    float textureHeight = static_cast<float>(spaceshipTexture.height);
-    const Vector2 origin = {0, 0};
+    const float textureWidth = static_cast<float>(spaceshipTexture.width);
+    const float textureHeight = static_cast<float>(spaceshipTexture.height);
+    constexpr Vector2 origin = {0, 0};
 
     for (int i = 0; i < lives; ++i)
     {
