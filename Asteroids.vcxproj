@@ -176,6 +176,7 @@ XCOPY "$(SolutionDir)res" "$(SolutionDir)bin\$(Configuration)\res"/e /h /y
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="DrawAdapted.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MenuScreens\CreditsMenu.cpp" />
     <ClCompile Include="MenuScreens\MainMenu.cpp" />
     <ClCompile Include="MenuScreens\menu.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
@@ -250,6 +251,7 @@ XCOPY "$(SolutionDir)res" "$(SolutionDir)bin\$(Configuration)\res"/e /h /y
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Circle.h" />
     <ClInclude Include="DrawAdapted.h" />
+    <ClInclude Include="MenuScreens\CreditsMenu.h" />
     <ClInclude Include="MenuScreens\MainMenu.h" />
     <ClInclude Include="MenuScreens\menu.h" />
     <ClInclude Include="MenuScreens\MenuEnums.h" />
