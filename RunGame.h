@@ -1,6 +1,7 @@
 #pragma once
 
 struct Asteroid;
-void RunGame();
-
-
+namespace barra
+{
+    void RunGame();
+}

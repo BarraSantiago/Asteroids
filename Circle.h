@@ -1,8 +1,10 @@
 ﻿#pragma once
-
-struct Circle
+namespace barra
 {
-    float x;
-    float y;
-    float radius;
-};
+    struct Circle
+    {
+        float x;
+        float y;
+        float radius;
+    };
+}

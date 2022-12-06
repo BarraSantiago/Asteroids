@@ -1,3 +1,6 @@
 ﻿#pragma once
 
-void RulesMenu();
+namespace barra
+{
+    void RulesMenu();
+}

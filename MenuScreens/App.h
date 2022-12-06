@@ -1,4 +1,7 @@
 ﻿#pragma once
 
-void RunApp();
-void DrawBackground();
+namespace barra
+{
+    void RunApp();
+    void DrawBackground();
+}

@@ -11,76 +11,79 @@
 
 using namespace std;
 
+namespace barra
+{
 #pragma region globalVariables
 
-bool music = true;
-bool sound = true;
-bool debugMode = false;
+    bool music = true;
+    bool sound = true;
+    bool debugMode = false;
 
-Texture2D backgroundTexture;
+    Texture2D backgroundTexture;
 
-MenuOptions menuOptions = MenuOptions::menu;
+    MenuOptions menuOptions = MenuOptions::menu;
 
-Image logo;
+    Image logo;
 
 #pragma endregion
 
-void RunApp()
-{
-    #pragma region initMenu
-    int screenWidth = 1280;
-    int screenHeight = 960;
-    constexpr char Title[] = "Asteroids";
-
-    InitWindow(screenWidth, screenHeight, Title);
-
-    backgroundTexture = LoadTexture("res/asteroids_background.png");
-
-    logo = LoadImage("res/asteroids_logo.png");
-    SetWindowIcon(logo);
-    
-    InitOptions();
-
-    #pragma endregion
-
-    while (!WindowShouldClose() && menuOptions != MenuOptions::exit)
+    void RunApp()
     {
-        switch (menuOptions)
+#pragma region initMenu
+        int screenWidth = 1280;
+        int screenHeight = 960;
+        constexpr char Title[] = "Asteroids";
+
+        InitWindow(screenWidth, screenHeight, Title);
+
+        backgroundTexture = LoadTexture("res/asteroids_background.png");
+
+        logo = LoadImage("res/asteroids_logo.png");
+        SetWindowIcon(logo);
+
+        InitOptions();
+
+#pragma endregion
+
+        while (!WindowShouldClose() && menuOptions != MenuOptions::exit)
         {
-        case MenuOptions::menu:
-            MainMenu();
-            break;
-        case MenuOptions::play:
-            RunGame();
-            break;
-        case MenuOptions::options:
-            UpdateOptions(screenWidth, screenHeight);
-            DrawOptions();
-            break;
-        case MenuOptions::rules:
-            RulesMenu();
-            break;
-        case MenuOptions::credits:
-            CreditsMenu();
-            break;
-        case MenuOptions::exit:
-            CloseWindow();
-            break;
-        default:
-            break;
+            switch (menuOptions)
+            {
+            case MenuOptions::menu:
+                MainMenu();
+                break;
+            case MenuOptions::play:
+                RunGame();
+                break;
+            case MenuOptions::options:
+                UpdateOptions(screenWidth, screenHeight);
+                DrawOptions();
+                break;
+            case MenuOptions::rules:
+                RulesMenu();
+                break;
+            case MenuOptions::credits:
+                CreditsMenu();
+                break;
+            case MenuOptions::exit:
+                CloseWindow();
+                break;
+            default:
+                break;
+            }
         }
+        UnloadTexture(backgroundTexture);
     }
-    UnloadTexture(backgroundTexture);
-}
 
-void DrawBackground()
-{
-    const float frameWidth = static_cast<float>(GetScreenWidth());
-    const float frameHeight = static_cast<float>(GetScreenHeight());
-    const Rectangle sourceRec = {0, 0, frameWidth, frameHeight};
-    const Vector2 origin = {0, 0};
+    void DrawBackground()
+    {
+        const float frameWidth = static_cast<float>(GetScreenWidth());
+        const float frameHeight = static_cast<float>(GetScreenHeight());
+        const Rectangle sourceRec = {0, 0, frameWidth, frameHeight};
+        const Vector2 origin = {0, 0};
 
-    DrawTexturePro(backgroundTexture, sourceRec,
-                   {0, 0, static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight())}, origin, 0,
-                   RAYWHITE);
+        DrawTexturePro(backgroundTexture, sourceRec,
+                       {0, 0, static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight())}, origin, 0,
+                       RAYWHITE);
+    }
 }

@@ -1,3 +1,6 @@
 ﻿#pragma once
 
-void MainMenu();
+namespace barra
+{
+    void MainMenu();
+}

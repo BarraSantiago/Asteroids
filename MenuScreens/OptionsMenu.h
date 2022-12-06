@@ -1,5 +1,8 @@
 ﻿#pragma once
 
-void InitOptions();
-void DrawOptions();
-void UpdateOptions(int& screenWidth, int& screenHeight);
+namespace barra
+{
+    void InitOptions();
+    void DrawOptions();
+    void UpdateOptions(int& screenWidth, int& screenHeight);
+}

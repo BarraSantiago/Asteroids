@@ -1,22 +1,25 @@
 ﻿#pragma once
 
-enum class MenuOptions
+namespace barra
 {
-    menu,
-    play,
-    options,
-    rules,
-    credits,
-    exit
-};
+    enum class MenuOptions
+    {
+        menu,
+        play,
+        options,
+        rules,
+        credits,
+        exit
+    };
 
-struct MenuUI
-{
-    int fontSize;
-    float xPosition;
-    float yPosition;
-    float xRepos;
-    float yRepos;
-};
+    struct MenuUI
+    {
+        int fontSize;
+        float xPosition;
+        float yPosition;
+        float xRepos;
+        float yRepos;
+    };
 
-MenuUI InitMenuUI();
+    MenuUI InitMenuUI();
+}

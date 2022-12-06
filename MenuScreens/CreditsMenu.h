@@ -1,3 +1,6 @@
 ﻿#pragma once
 
-void CreditsMenu();
+namespace barra
+{
+    void CreditsMenu();
+}

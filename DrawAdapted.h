@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <raylib.h>
-
-Rectangle TextureToSourceRec(Texture2D texture);
-
+namespace barra
+{
+    Rectangle TextureToSourceRec(Texture2D texture);
+}

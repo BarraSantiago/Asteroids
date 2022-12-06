@@ -1,4 +1,7 @@
 ﻿#pragma once
 
-void PowerUp();
-void DrawPowerUp();
+namespace barra
+{
+    void PowerUp();
+    void DrawPowerUp();
+}
