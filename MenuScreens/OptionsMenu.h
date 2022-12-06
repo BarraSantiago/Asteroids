@@ -1,3 +1,5 @@
 ﻿#pragma once
 
-void OptionsMenu(int& screenWidth, int& screenHeight);
+void InitOptions();
+void DrawOptions();
+void UpdateOptions(int& screenWidth, int& screenHeight);

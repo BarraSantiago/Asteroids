@@ -1,6 +1,4 @@
 ﻿#pragma once
 
-
-
-void Menu();
+void RunApp();
 void DrawBackground();

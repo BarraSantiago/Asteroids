@@ -1,7 +1,7 @@
-#include "MenuScreens/menu.h"
+#include "App.h"
 
 int main() 
 {
-	Menu();
+	RunApp();
 	return 0;
 }

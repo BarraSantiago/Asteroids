@@ -4,7 +4,7 @@
 #include "Asteroid.h"
 #include "Bullet.h"
 #include "PowerUp.h"
-#include "MenuScreens/menu.h"
+#include "App.h"
 #include "Spaceship.h"
 #include "raylib.h"
 #include "MenuScreens/MenuEnums.h"
@@ -86,6 +86,7 @@ void RunGame()
         Update(asteroids, bullets, player);
         DrawGame(asteroids, bullets, player, mousePos);
     }
+    
     if (!player.isAlive)
     {
         while (!WindowShouldClose())

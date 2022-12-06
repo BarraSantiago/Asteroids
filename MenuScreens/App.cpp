@@ -1,4 +1,4 @@
-﻿#include "menu.h"
+﻿#include "App.h"
 #include <iostream>
 
 #include "CreditsMenu.h"
@@ -25,7 +25,7 @@ Image logo;
 
 #pragma endregion
 
-void Menu()
+void RunApp()
 {
     #pragma region initMenu
     int screenWidth = 1280;
@@ -38,8 +38,11 @@ void Menu()
 
     logo = LoadImage("res/asteroids_logo.png");
     SetWindowIcon(logo);
-    #pragma endregion
     
+    InitOptions();
+
+    #pragma endregion
+
     while (!WindowShouldClose() && menuOptions != MenuOptions::exit)
     {
         switch (menuOptions)
@@ -51,7 +54,8 @@ void Menu()
             RunGame();
             break;
         case MenuOptions::options:
-            OptionsMenu(screenWidth, screenHeight);
+            UpdateOptions(screenWidth, screenHeight);
+            DrawOptions();
             break;
         case MenuOptions::rules:
             RulesMenu();

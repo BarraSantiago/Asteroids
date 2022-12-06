@@ -3,7 +3,7 @@
 #include <raylib.h>
 #include <string>
 
-#include "menu.h"
+#include "App.h"
 #include "MenuEnums.h"
 
 static Rectangle debugRec;
@@ -13,24 +13,31 @@ extern bool sound;
 extern bool debugMode;
 extern MenuOptions menuOptions;
 
-void DrawOptions(Rectangle backBackRec, Rectangle screenSizeA, Rectangle screenSizeB, Rectangle bgMusic,
-                 Rectangle soundRec);
+static Rectangle backRec;
+static Rectangle screenSizeA;
+static Rectangle screenSizeB;
+static Rectangle backgroundMusicRec;
+static Rectangle soundRec;
 
-void OptionsMenu(int& screenWidth, int& screenHeight)
+
+void InitOptions()
 {
     float height = static_cast<float>(GetScreenHeight());
     float width1 = static_cast<float>(GetScreenHeight()) / 15.0f;
     const float xPos = static_cast<float>(GetScreenWidth()) / 16.0f;
     const float height2 = static_cast<float>(GetScreenHeight()) / 17.0f;
-    const Rectangle backRec = {xPos, height / 1.1f, width1 * 2.5f, width1};
-    const Rectangle screenSizeA = {xPos, height / 3.6f, width1 * 3.5f, height2};
-    const Rectangle screenSizeB = {xPos * 4.15f, height / 3.6f, width1 * 4.3f, height2};
-    const Rectangle backgroundMusic = {xPos - xPos / 20.0f, height / 2.22f, width1 * 8.4f, height2};
-    const Rectangle soundRec = {xPos - xPos / 20.0f, height / 1.93f, width1 * 8.4f, height2};
+    backRec = {xPos, height / 1.1f, width1 * 2.5f, width1};
+    screenSizeA = {xPos, height / 3.6f, width1 * 3.5f, height2};
+    screenSizeB = {xPos * 4.15f, height / 3.6f, width1 * 4.3f, height2};
+    backgroundMusicRec = {xPos - xPos / 20.0f, height / 2.22f, width1 * 8.4f, height2};
+    soundRec = {xPos - xPos / 20.0f, height / 1.93f, width1 * 8.4f, height2};
     debugRec = {xPos - xPos / 20.0f, height / 1.3f, width1 * 5.9f, height2};
+}
 
-    DrawOptions(backRec, screenSizeA, screenSizeB, backgroundMusic, soundRec);
+using namespace std;
 
+void UpdateOptions(int& screenWidth, int& screenHeight)
+{
     if (!IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) return;
 
     if (CheckCollisionPointRec(GetMousePosition(), backRec))
@@ -49,7 +56,7 @@ void OptionsMenu(int& screenWidth, int& screenHeight)
         screenHeight = 1080;
         SetWindowSize(screenWidth, screenHeight);
     }
-    else if (CheckCollisionPointRec(GetMousePosition(), backgroundMusic))
+    else if (CheckCollisionPointRec(GetMousePosition(), backgroundMusicRec))
     {
         music = !music;
     }
@@ -63,16 +70,13 @@ void OptionsMenu(int& screenWidth, int& screenHeight)
     }
 }
 
-using namespace std;
-
-void DrawOptions(Rectangle backBackRec, Rectangle screenSizeA, Rectangle screenSizeB, Rectangle bgMusic,
-                 Rectangle soundRec)
+void DrawOptions()
 {
     const int xPos = GetScreenWidth() / 15;
     const int fontSize = GetScreenHeight() / 30;
     const int fontSize1 = static_cast<int>(static_cast<float>(fontSize) * 1.5f);
     float height = static_cast<float>(GetScreenHeight());
-    
+
     constexpr Color DIFDARKGRAY = CLITERAL(Color){245, 245, 245, 60};
     constexpr Color NEONCYAN = CLITERAL(Color){4, 217, 255, 255};
 
@@ -95,9 +99,9 @@ void DrawOptions(Rectangle backBackRec, Rectangle screenSizeA, Rectangle screenS
     string isDebugActive = debugMode ? "[a]" : "[ ]";
     const string back = "Back";
 
-    if (CheckCollisionPointRec(GetMousePosition(), backBackRec))
+    if (CheckCollisionPointRec(GetMousePosition(), backRec))
     {
-        DrawRectangleRec(backBackRec, DIFDARKGRAY);
+        DrawRectangleRec(backRec, DIFDARKGRAY);
     }
     if (CheckCollisionPointRec(GetMousePosition(), screenSizeA))
     {
@@ -107,9 +111,9 @@ void DrawOptions(Rectangle backBackRec, Rectangle screenSizeA, Rectangle screenS
     {
         DrawRectangleRec(screenSizeB, DIFDARKGRAY);
     }
-    if (CheckCollisionPointRec(GetMousePosition(), bgMusic))
+    if (CheckCollisionPointRec(GetMousePosition(), backgroundMusicRec))
     {
-        DrawRectangleRec(bgMusic, DIFDARKGRAY);
+        DrawRectangleRec(backgroundMusicRec, DIFDARKGRAY);
     }
     if (CheckCollisionPointRec(GetMousePosition(), soundRec))
     {
