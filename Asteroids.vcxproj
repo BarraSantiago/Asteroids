@@ -174,6 +174,7 @@ XCOPY "$(SolutionDir)res" "$(SolutionDir)bin\$(Configuration)\res"/e /h /y
   <ItemGroup>
     <ClCompile Include="Asteroid.cpp" />
     <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="DrawAdapted.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="menu.cpp" />
     <ClCompile Include="RunGame.cpp" />
@@ -183,6 +184,7 @@ XCOPY "$(SolutionDir)res" "$(SolutionDir)bin\$(Configuration)\res"/e /h /y
     <ClInclude Include="Asteroid.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Circle.h" />
+    <ClInclude Include="DrawAdapted.h" />
     <ClInclude Include="menu.h" />
     <ClInclude Include="RunGame.h" />
     <ClInclude Include="Spaceship.h" />

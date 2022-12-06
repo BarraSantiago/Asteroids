@@ -1,5 +1,7 @@
 ﻿#include "Spaceship.h"
 #include <cmath>
+
+#include "DrawAdapted.h"
 #include "raymath.h"
 
 void AcelerationLimitator(float& aceleration)
@@ -71,13 +73,6 @@ float RepositionSpaceship(Circle body)
     }
 
     return angle;
-}
-
-Rectangle TextureToSourceRec(Texture2D texture)
-{
-    int frameWidth = texture.width;
-    int frameHeight = texture.height;
-    return {0.0f, 0.0f, static_cast<float>(frameWidth), static_cast<float>(frameHeight)};
 }
 
 void DrawTextureCyan(Texture2D texture, Rectangle position, Vector2 origin, float rotation)

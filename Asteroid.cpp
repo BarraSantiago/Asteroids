@@ -1,6 +1,8 @@
 ﻿#include "Asteroid.h"
 #include <raymath.h>
 
+#include "DrawAdapted.h"
+
 
 void DrawAsteroid(Asteroid asteroid, Texture2D texture);
 
@@ -74,12 +76,7 @@ void DrawAsteroids(std::vector<Asteroid> asteroids, Texture2D texture, Texture2D
     }
 }
 
-Rectangle TextureToSourceRec(Texture2D texture)
-{
-    int frameWidth = texture.width;
-    int frameHeight = texture.height;
-    return {0.0f, 0.0f, static_cast<float>(frameWidth), static_cast<float>(frameHeight)};
-}
+
 
 void DrawAsteroid(Asteroid asteroid, Texture2D texture)
 {
