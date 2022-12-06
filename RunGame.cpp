@@ -3,10 +3,9 @@
 #include <vector>
 #include "Asteroid.h"
 #include "Bullet.h"
-#include "menu.h"
+#include "MenuScreens/menu.h"
 #include "Spaceship.h"
 #include "raylib.h"
-#include "raymath.h"
 
 using namespace std;
 
@@ -247,13 +246,10 @@ void UpdateBullets(Bullet bullets[])
 {
     for (int i = 0; i < 5; ++i)
     {
-        if (bullets[i].isActive)
-        {
-            bullets[i].body.x += bullets[i].speed * bullets[i].direction.x * GetFrameTime();
-            bullets[i].body.y += bullets[i].speed * bullets[i].direction.y * GetFrameTime();
-            bullets[i].isActive = 0 < bullets[i].body.x && bullets[i].body.x < static_cast<float>(GetScreenWidth()) && 0
-                < bullets[i].body.y && bullets[i].body.y < static_cast<float>(GetScreenHeight());
-        }
+        if (!bullets[i].isActive) continue;
+        
+        MoveBullet(bullets[i]);
+        
     }
 }
 

@@ -13,3 +13,4 @@ struct Bullet
 void Shoot(Circle player, Vector2 mousePos, Bullet bullets[]);
 void DrawBullets(Bullet bullets[]);
 Bullet InitBullet(Circle player, Vector2 mousePos);
+void MoveBullet(Bullet& bullet);

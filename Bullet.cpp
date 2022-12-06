@@ -32,6 +32,14 @@ Bullet InitBullet(Circle player, Vector2 mousePos)
     return {body, direction, speed, isActive};
 }
 
+void MoveBullet(Bullet& bullet)
+{
+    bullet.body.x += bullet.speed * bullet.direction.x * GetFrameTime();
+    bullet.body.y += bullet.speed * bullet.direction.y * GetFrameTime();
+    bullet.isActive = 0 < bullet.body.x && bullet.body.x < static_cast<float>(GetScreenWidth()) && 0
+        < bullet.body.y && bullet.body.y < static_cast<float>(GetScreenHeight());
+}
+
 void DrawBullets(Bullet bullets[])
 {
     constexpr int max = sizeof(bullets);
