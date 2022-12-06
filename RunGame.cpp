@@ -260,54 +260,21 @@ void UpdateBullets(Bullet bullets[])
 void UpdateAsteroids(vector<Asteroid>& asteroids, Spaceship spaceship)
 {
     specialTimer -= GetFrameTime();
-    
-    for (Asteroid& asteroid : asteroids)
-    {
-        if (!asteroid.isActive) continue;
 
-        if (asteroid.size < AsteroidSize::SpecialS)
-        {
-            Vector2 velocity = {
-                GetFrameTime() * asteroid.direction.x * asteroid.speed,
-                GetFrameTime() * asteroid.direction.y * asteroid.speed
-            };
-            asteroid.body.x += velocity.x;
-            asteroid.body.y += velocity.y;
-            WarpAsteroid(asteroid);
-        }
-        else
-        {
-            asteroid.direction = {
-                spaceship.body.x - asteroid.body.x, spaceship.body.y - asteroid.body.y
-            };
-            asteroid.direction = Vector2Normalize(asteroid.direction);
-            Vector2 velocity = {
-                GetFrameTime() * asteroid.direction.x * asteroid.speed,
-                GetFrameTime() * asteroid.direction.y * asteroid.speed
-            };
-            asteroid.body.x += velocity.x;
-            asteroid.body.y += velocity.y;
-        }
-    }
-    for (int i = 0; i < static_cast<int>(asteroids.size()); ++i)
-    {
-    }
+    MoveAsteroids(asteroids, {spaceship.body.x, spaceship.body.y});
 
-    SpawnSpecial(asteroids);
+    if (specialTimer <= 0) SpawnSpecial(asteroids);
 }
 
 void SpawnSpecial(vector<Asteroid>& asteroids)
 {
-    if (specialTimer <= 0)
-    {
-        float x = static_cast<float>(GetRandomValue(0, GetScreenWidth()));
-        float y = static_cast<float>(GetRandomValue(0, 1));
-        y = y == 0 ? 0 : static_cast<float>(GetScreenHeight());
-        asteroids.push_back({
-            {x, y, static_cast<float>(GetScreenWidth()) / 20.0f}, AsteroidSize::SpecialL, {0, 0}, 130, true
-        });
-        specialTimer = 8.0f;
-    }
+    float x = static_cast<float>(GetRandomValue(0, GetScreenWidth()));
+    float y = static_cast<float>(GetRandomValue(0, 1));
+    y = y == 0 ? 0 : static_cast<float>(GetScreenHeight());
+    asteroids.push_back({
+        {x, y, static_cast<float>(GetScreenWidth()) / 20.0f}, AsteroidSize::SpecialL, {0, 0}, 130, true
+    });
+    specialTimer = 8.0f;
 }
 
 void UpdateSpaceship(Bullet bullets[], Spaceship& spaceship)

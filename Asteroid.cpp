@@ -131,6 +131,35 @@ void SpawnAsteroids(std::vector<Asteroid>& asteroids, int vecPosition)
     SpawnAsteroid(asteroids, vecPosition, size);
 }
 
+void MoveAsteroid(Asteroid& asteroid)
+{
+    Vector2 velocity = {
+        GetFrameTime() * asteroid.direction.x * asteroid.speed,
+        GetFrameTime() * asteroid.direction.y * asteroid.speed
+    };
+    asteroid.body.x += velocity.x;
+    asteroid.body.y += velocity.y;
+    WarpAsteroid(asteroid);
+}
+
+void MoveAsteroids(std::vector<Asteroid>& asteroids, Vector2 spaceshipPos)
+{
+    for (Asteroid& asteroid : asteroids)
+    {
+        if (!asteroid.isActive) continue;
+
+        if (asteroid.size >= AsteroidSize::SpecialS)
+        {
+            asteroid.direction = {
+                spaceshipPos.x - asteroid.body.x, spaceshipPos.y - asteroid.body.y
+            };
+            asteroid.direction = Vector2Normalize(asteroid.direction);
+        }
+
+        MoveAsteroid(asteroid);
+    }
+}
+
 void WarpAsteroid(Asteroid& asteroid)
 {
     if (asteroid.body.x < 0)
