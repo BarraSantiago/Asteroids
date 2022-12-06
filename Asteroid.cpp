@@ -7,9 +7,8 @@ void DrawAsteroid(Asteroid asteroid, Texture2D texture);
 static float rotation = 0;
 extern bool debugMode;
 
-Asteroid InitSpecialAsteroid(Vector2 position,  AsteroidSize size)
+Asteroid InitSpecialAsteroid(Vector2 position, AsteroidSize size)
 {
-
     float speed = 30.0f;
     float radius = static_cast<float>(GetScreenWidth()) / 10.0f;
     switch (size)
@@ -28,12 +27,13 @@ Asteroid InitSpecialAsteroid(Vector2 position,  AsteroidSize size)
         break;
     default: ;
     }
-    
+
     Circle body = {position.x, position.y, radius};
-    
-    return {body, size, {0,0}, speed, true};
+
+    return {body, size, {0, 0}, speed, true};
 }
-Asteroid InitAsteroid(Vector2 position,  AsteroidSize size)
+
+Asteroid InitAsteroid(Vector2 position, AsteroidSize size)
 {
     float speed = 30.0f;
     float radius = static_cast<float>(GetScreenWidth()) / 10.0f;
@@ -54,7 +54,6 @@ Asteroid InitAsteroid(Vector2 position,  AsteroidSize size)
     default:
         radius = static_cast<float>(GetScreenWidth()) / 10.0f;
         break;
-
     }
     Circle body = {position.x, position.y, radius};
     Vector2 direction;
@@ -82,49 +81,54 @@ void DrawAsteroid(Asteroid asteroid, Texture2D texture)
 {
     const float frameWidth = static_cast<float>(texture.width);
     const float frameHeight = static_cast<float>(texture.height);
-    const Rectangle sourceRec = { 0,0,frameWidth,frameHeight};
-    const Vector2 origin = {asteroid.body.radius , asteroid.body.radius};
-    
-    DrawTexturePro(texture, sourceRec, {asteroid.body.x, asteroid.body.y, asteroid.body.radius*2, asteroid.body.radius*2}, origin, rotation, RAYWHITE);
-    if(debugMode)
+    const Rectangle sourceRec = {0, 0, frameWidth, frameHeight};
+    const Rectangle position = {asteroid.body.x, asteroid.body.y, asteroid.body.radius * 2, asteroid.body.radius * 2};
+    const Vector2 origin = {asteroid.body.radius, asteroid.body.radius};
+
+    DrawTexturePro(texture, sourceRec, position, origin, rotation, RAYWHITE);
+    if (debugMode)
     {
-        DrawCircleLines(static_cast<int>(asteroid.body.x), static_cast<int>(asteroid.body.y), asteroid.body.radius, WHITE);
+        DrawCircleLines(static_cast<int>(asteroid.body.x), static_cast<int>(asteroid.body.y), asteroid.body.radius,
+                        WHITE);
     }
-    rotation += 1*GetFrameTime();
+    rotation += 1 * GetFrameTime();
 }
 
-void SpawnAsteroid(std::vector<Asteroid>& asteroids, int vecPosition)
+void SpawnAsteroid(std::vector<Asteroid>& asteroids, int vecPosition, AsteroidSize size)
 {
     const Vector2 mapPosition = {asteroids[vecPosition].body.x, asteroids[vecPosition].body.y};
-    const AsteroidSize size = asteroids[vecPosition].size;
+    int quantity = 2;
 
     switch (size)
     {
     case AsteroidSize::Small:
-        asteroids[vecPosition].isActive = false;
-        break;
-    case AsteroidSize::Medium:
-
-        asteroids[vecPosition] = InitAsteroid(mapPosition, AsteroidSize::Small);
-        asteroids.push_back(InitAsteroid(mapPosition, AsteroidSize::Small));
-        break;
-    case AsteroidSize::Large:
-        asteroids[vecPosition] = InitAsteroid(mapPosition, AsteroidSize::Medium);
-        asteroids.push_back(InitAsteroid(mapPosition, AsteroidSize::Medium));
-        break;
     case AsteroidSize::SpecialS:
-        asteroids[vecPosition].isActive = false;
+        quantity = 0;
         break;
     case AsteroidSize::SpecialM:
-        asteroids[vecPosition] = InitSpecialAsteroid(mapPosition, AsteroidSize::SpecialS);
-        break;
     case AsteroidSize::SpecialL:
-        asteroids[vecPosition] = InitSpecialAsteroid(mapPosition, AsteroidSize::SpecialM);
+        quantity = 1;
         break;
-    default:
+    case AsteroidSize::Medium:
+    case AsteroidSize::Large:
+        quantity = 2;
         break;
-
     }
+
+    asteroids.erase(asteroids.begin() + vecPosition);
+    size = static_cast<AsteroidSize>(static_cast<int>(size) - 1);
+
+    for (int i = 0; i < quantity; ++i)
+    {
+        asteroids.push_back(InitAsteroid(mapPosition, size));
+    }
+}
+
+void SpawnAsteroids(std::vector<Asteroid>& asteroids, int vecPosition)
+{
+    AsteroidSize size = asteroids[vecPosition].size;
+    
+    SpawnAsteroid(asteroids, vecPosition, size);
 }
 
 void WarpAsteroid(Asteroid& asteroid)

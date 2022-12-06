@@ -342,7 +342,7 @@ void CheckBulletAsteroidCollision(vector<Asteroid>& asteroids, Bullet bullets[])
                 {
                     score += static_cast<int>(asteroids[i].size);
                     bullets[j].isActive = false;
-                    SpawnAsteroid(asteroids, i);
+                    SpawnAsteroids(asteroids, i);
                 }
             }
         }
