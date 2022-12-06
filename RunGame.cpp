@@ -315,46 +315,42 @@ void CheckBulletAsteroidCollision(vector<Asteroid>& asteroids, Bullet bullets[])
     {
         for (int i = 0; i < static_cast<int>(asteroids.size()); i++)
         {
-            if (bullets[j].isActive && asteroids[i].isActive)
-            {
-                if (CircleCircleCollision(bullets[j].body, asteroids[i].body))
-                {
-                    score += static_cast<int>(asteroids[i].size);
-                    bullets[j].isActive = false;
-                    SpawnAsteroids(asteroids, i);
-                }
-            }
+            if (!bullets[j].isActive || !asteroids[i].isActive) continue;
+
+            if (!CircleCircleCollision(bullets[j].body, asteroids[i].body)) continue;
+
+            score += static_cast<int>(asteroids[i].size);
+            bullets[j].isActive = false;
+            SpawnAsteroids(asteroids, i);
         }
     }
 }
 
 void CheckAsteroidPlayerCollision(vector<Asteroid> asteroids, Spaceship& spaceship)
 {
-    if (damagedTimer <= 0)
-    {
-        for (int i = 0; i < static_cast<int>(asteroids.size()); ++i)
-        {
-            if (asteroids[i].isActive)
-            {
-                if (CircleCircleCollision(spaceship.body, asteroids[i].body))
-                {
-                    if (sound)
-                    {
-                        PlaySound(hit);
-                    }
-                    spaceship.lives--;
-                    damagedTimer = 1.5f;
-                    if (spaceship.lives <= 0)
-                    {
-                        spaceship.isAlive = false;
-                    }
-                }
-            }
-        }
-    }
-    else
+    if (damagedTimer > 0)
     {
         damagedTimer -= GetFrameTime();
+        return;
+    }
+
+    for (int i = 0; i < static_cast<int>(asteroids.size()); ++i)
+    {
+        if (!asteroids[i].isActive) continue;
+
+        if (!CircleCircleCollision(spaceship.body, asteroids[i].body)) continue;
+
+        if (sound)
+        {
+            PlaySound(hit);
+        }
+        
+        spaceship.lives--;
+        damagedTimer = 1.5f;
+        if (spaceship.lives <= 0)
+        {
+            spaceship.isAlive = false;
+        }
     }
 }
 
