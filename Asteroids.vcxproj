@@ -243,6 +243,7 @@ XCOPY "$(SolutionDir)res" "$(SolutionDir)bin\$(Configuration)\res"/e /h /y
     <ClCompile Include="MenuScreens\MenuEnums.cpp" />
     <ClCompile Include="MenuScreens\OptionsMenu.cpp" />
     <ClCompile Include="MenuScreens\RulesMenu.cpp" />
+    <ClCompile Include="PowerUp.cpp" />
     <ClCompile Include="RunGame.cpp" />
     <ClCompile Include="Spaceship.cpp" />
   </ItemGroup>
@@ -257,6 +258,7 @@ XCOPY "$(SolutionDir)res" "$(SolutionDir)bin\$(Configuration)\res"/e /h /y
     <ClInclude Include="MenuScreens\MenuEnums.h" />
     <ClInclude Include="MenuScreens\OptionsMenu.h" />
     <ClInclude Include="MenuScreens\RulesMenu.h" />
+    <ClInclude Include="PowerUp.h" />
     <ClInclude Include="RunGame.h" />
     <ClInclude Include="Spaceship.h" />
   </ItemGroup>

@@ -20,10 +20,10 @@ void AcelerationLimitator(float& aceleration)
 void PlayerAceleration(Vector2& aceleration, Vector2 mousePos, Vector2 playerPos)
 {
     constexpr float playerSpeed = 300.f;
-    
+
     Vector2 direcVector = {mousePos.x - playerPos.x, mousePos.y - playerPos.y};
     Vector2 normVector = Vector2Normalize(direcVector);
-    
+
     aceleration.x += normVector.x * GetFrameTime() * playerSpeed;
     aceleration.y += normVector.y * GetFrameTime() * playerSpeed;
 }
@@ -31,12 +31,12 @@ void PlayerAceleration(Vector2& aceleration, Vector2 mousePos, Vector2 playerPos
 void MovePlayer(Spaceship& player, Vector2 mousePos)
 {
     Vector2 playerPos{player.body.x, player.body.y};
-    
+
     if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT))
     {
         PlayerAceleration(player.aceleration, mousePos, playerPos);
     }
-    
+
     player.body.x += player.aceleration.x * GetFrameTime();
     player.body.y += player.aceleration.y * GetFrameTime();
 
@@ -108,6 +108,14 @@ void DrawSpaceship(Circle body, float rotation, Texture2D spaceshipTexture)
     {
         DrawCircleLines(static_cast<int>(body.x), static_cast<int>(body.y), body.radius, {4, 217, 255, 255});
     }
+}
+
+void DrawShield(Spaceship spaceship)
+{
+    constexpr Color altBlue = {0, 121, 241, 130};
+
+    DrawCircle(static_cast<int>(spaceship.body.x), static_cast<int>(spaceship.body.y), spaceship.body.radius,
+               altBlue);
 }
 
 Spaceship InitSpaceship()

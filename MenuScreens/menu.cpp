@@ -27,6 +27,7 @@ Image logo;
 
 void Menu()
 {
+    #pragma region initMenu
     int screenWidth = 1280;
     int screenHeight = 960;
     constexpr char Title[] = "Asteroids";
@@ -37,7 +38,8 @@ void Menu()
 
     logo = LoadImage("res/asteroids_logo.png");
     SetWindowIcon(logo);
-
+    #pragma endregion
+    
     while (!WindowShouldClose() && menuOptions != MenuOptions::exit)
     {
         switch (menuOptions)

@@ -3,6 +3,7 @@
 #include <vector>
 #include "Asteroid.h"
 #include "Bullet.h"
+#include "PowerUp.h"
 #include "MenuScreens/menu.h"
 #include "Spaceship.h"
 #include "raylib.h"
@@ -16,10 +17,7 @@ void UpdateBullets(Bullet bullets[]);
 void UpdateAsteroids(vector<Asteroid>& asteroids, Spaceship spaceship);
 void SpawnSpecial(vector<Asteroid>& asteroids);
 void UpdateSpaceship(Bullet bullets[], Spaceship& spaceship);
-void PowerUp();
 void DrawGame(vector<Asteroid> asteroids, Bullet bullets[], Spaceship spaceship, Vector2 mousePos);
-void DrawPowerUp();
-void DrawShield(Spaceship spaceship);
 void CheckBulletAsteroidCollision(vector<Asteroid>& asteroids, Bullet bullets[]);
 void CheckAsteroidPlayerCollision(vector<Asteroid> asteroids, Spaceship& spaceship);
 void CheckPowerUpPlayerCollision(Spaceship spaceship);
@@ -42,7 +40,7 @@ static Texture2D asteroidsTexture;
 static Texture2D specialAsteroidsTexture;
 Texture2D bulletTexture;
 
-static Circle powerUp1;
+Circle powerUp1;
 
 static Sound shooting;
 static Sound hit;
@@ -50,13 +48,13 @@ static Music backgrounMusic;
 
 static int score;
 static float damagedTimer = 0;
-static float powerUp1Timer = 7.0f;
+float powerUp1Timer = 7.0f;
 static float specialTimer = 5.0f;
 
 extern bool music;
 extern bool sound;
 extern bool debugMode;
-static bool isPowerUp1 = false;
+bool isPowerUp1 = false;
 static bool win = false;
 
 extern MenuOptions menuOptions;
@@ -80,6 +78,7 @@ void RunGame()
     Vector2 mousePos = GetMousePosition();
     InitAsteroids(asteroids, 10, player.body);
 #pragma endregion
+
     while (!WindowShouldClose() && player.isAlive && !win)
     {
         mousePos = GetMousePosition();
@@ -181,37 +180,20 @@ void DrawGame(vector<Asteroid> asteroids, Bullet bullets[], Spaceship spaceship,
     ClearBackground(BLACK);
     DrawBackground();
     DrawPowerUp();
+    
     if (debugMode)
     {
         DrawLine(static_cast<int>(mousePos.x), static_cast<int>(mousePos.y), static_cast<int>(spaceship.body.x),
                  static_cast<int>(spaceship.body.y), WHITE);
     }
+    
     DrawBullets(bullets);
     DrawSpaceship(spaceship.body, spaceship.rotation, spaceshipTexture);
-    DrawShield(spaceship);
+    if (damagedTimer > 0) DrawShield(spaceship);
     DrawAsteroids(asteroids, asteroidsTexture, specialAsteroidsTexture);
     DrawLives(spaceshipTexture, spaceship.lives);
     DrawScore();
     EndDrawing();
-}
-
-void DrawPowerUp()
-{
-    constexpr Color altBlue = {0, 121, 241, 130};
-    if (isPowerUp1)
-    {
-        DrawCircle(static_cast<int>(powerUp1.x), static_cast<int>(powerUp1.y), powerUp1.radius, altBlue);
-    }
-}
-
-void DrawShield(Spaceship spaceship)
-{
-    constexpr Color altBlue = {0, 121, 241, 130};
-    if (damagedTimer > 0)
-    {
-        DrawCircle(static_cast<int>(spaceship.body.x), static_cast<int>(spaceship.body.y), spaceship.body.radius,
-                   altBlue);
-    }
 }
 
 void DrawScore()
@@ -358,19 +340,4 @@ bool CircleCircleCollision(Circle c1, Circle c2)
     const float distance = sqrt((distX * distX) + (distY * distY));
 
     return distance <= c1.radius + c2.radius;
-}
-
-void PowerUp()
-{
-    if (powerUp1Timer <= 0 && !isPowerUp1)
-    {
-        float x = static_cast<float>(GetRandomValue(0, GetScreenWidth()));
-        float y = static_cast<float>(GetRandomValue(0, GetScreenHeight()));
-        powerUp1 = {x, y, static_cast<float>(GetScreenWidth()) / 35.0f};
-        isPowerUp1 = true;
-    }
-    else
-    {
-        powerUp1Timer -= GetFrameTime();
-    }
 }
